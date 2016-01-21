@@ -91,7 +91,7 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
             case R.id.send_button:
                 String messageText = mMessageEditText.getText().toString();
                 if (!messageText.equals("")) {
-                    GlobalSocket.getInstance().performAsyncRequest(new MessageRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid, mChannel.getId(), messageText));
+                    //GlobalSocket.getInstance().performRequest(new MessageRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid, mChannel.getId(), messageText));
                 }
                 break;
         }
@@ -132,22 +132,6 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
                         mChatAdapter.add(messageEvent.getMessage());
                         mMessageEditText.setText("");
                         mChatRecyclerView.scrollToPosition(mChatAdapter.getItemCount() - 1);
-                    }
-                });
-                break;
-            case "ev_enter":
-                final EnterEventResponse enterEvent = new EnterEventResponse(rawResponse.getJsonData());
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getActivity().getBaseContext(), enterEvent.getUser().getNickname() + " enter to chat", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                break;
-            case "ev_leave":
-                final LeaveEventResponse leaveEvent = new LeaveEventResponse(rawResponse.getJsonData());
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getActivity().getBaseContext(), leaveEvent.getUser().getNickname() + " leave chat", Toast.LENGTH_SHORT).show();
                     }
                 });
                 break;

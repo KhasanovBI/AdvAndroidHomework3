@@ -33,6 +33,18 @@
     <string name="changes_saved">Изменения сохранены</string>
 
     <string-array name="errors">
+        <item>All OK</item>
+        <item>Login or Nickname already exist</item>
+        <item>Invalid login or password</item>
+        <item>Invalid JSON</item>
+        <item>Empty Nick, Login, Password</item>
+        <item>User is already registered</item>
+        <item>User has to auth</item>
+        <item>User has to register</item>
+        <item>User not found by uid</item>
+    </string-array>
+
+    <string-array name="connection_errors">
         <item>Error connecting to resource</item>
         <item>Incorrect URL</item>
         <item>Unknown host</item>

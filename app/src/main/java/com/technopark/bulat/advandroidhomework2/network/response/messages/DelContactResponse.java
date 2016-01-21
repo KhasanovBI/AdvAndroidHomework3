@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DelContactResponse {
-    private static final String LOG_TAG = "Message: createChannel";
+    private static final String LOG_TAG = "MyDelContactResponse";
     private int status;
     private String error;
 

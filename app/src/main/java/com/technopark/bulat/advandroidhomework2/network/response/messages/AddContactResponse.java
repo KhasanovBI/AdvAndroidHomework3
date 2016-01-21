@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AddContactResponse {
-    private static final String LOG_TAG = "Message: auth";
+    private static final String LOG_TAG = "MyAddContactResponse";
     private int status;
     private String error;
     private String sid;

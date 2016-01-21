@@ -1,9 +1,14 @@
 package com.technopark.bulat.advandroidhomework2.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by bulat on 21.01.16.
  */
-public class Contact {
+public class Contact implements Parcelable {
     private int myid;
     private String name;
     private String phone;
@@ -49,5 +54,15 @@ public class Contact {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

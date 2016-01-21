@@ -1,9 +1,11 @@
 package com.technopark.bulat.advandroidhomework2.models;
 
+import java.io.Serializable;
+
 /**
  * Created by bulat on 08.11.15.
  */
-public class User {
+public class User implements Serializable {
     private String login;
     private String pass;
     private String name;

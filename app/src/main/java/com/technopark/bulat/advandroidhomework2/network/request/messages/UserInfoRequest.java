@@ -12,14 +12,14 @@ import java.util.Map;
  * Created by bulat on 16.11.15.
  */
 public class UserInfoRequest implements RequestMessage {
-    private final String userId;
     private final String cid;
     private final String sid;
+    private final String userId;
 
-    public UserInfoRequest(String userId, String cid, String sid) {
-        this.userId = userId;
+    public UserInfoRequest(String cid, String sid, String userId) {
         this.cid = cid;
         this.sid = sid;
+        this.userId = userId;
     }
 
     @Override

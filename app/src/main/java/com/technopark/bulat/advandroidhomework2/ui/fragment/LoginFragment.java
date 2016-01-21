@@ -141,19 +141,19 @@ public class LoginFragment extends BaseFragment implements OnClickListener, Obse
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             String userStatus = userInfoResponse.getUser().getStatus();
-                            String nickname = userInfoResponse.getUser().getNickname();
+                            //String nickname = userInfoResponse.getUser().getNickname();
                             SharedPreferences.Editor sharedPreferencesEditor = mSharedPreferences.edit();
                             sharedPreferencesEditor.putString("status", userStatus);
-                            sharedPreferencesEditor.putString("nickname", nickname);
+                            //sharedPreferencesEditor.putString("nickname", nickname);
                             sharedPreferencesEditor.apply();
                             DrawerLayout drawerLayout = ((MainActivity) getActivity()).getDrawerLayout();
-                            ((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
+                            //((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
                             ((TextView) drawerLayout.findViewById(R.id.status)).setText(userStatus);
                         }
                     });
                     Fragment channelListFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_channel_list);
                     if (channelListFragment == null) {
-                        channelListFragment = new ChannelListFragment();
+                        channelListFragment = new ContactListFragment();
                     }
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()

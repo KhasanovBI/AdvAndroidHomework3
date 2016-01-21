@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AuthResponse {
-    private static final String LOG_TAG = "Message: auth";
+    private static final String LOG_TAG = "MyAuthResponse";
     private int status;
     private String error;
     private String sid;

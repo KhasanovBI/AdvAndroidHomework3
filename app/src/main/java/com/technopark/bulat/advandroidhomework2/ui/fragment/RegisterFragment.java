@@ -1,6 +1,5 @@
 package com.technopark.bulat.advandroidhomework2.ui.fragment;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,17 +21,16 @@ import com.technopark.bulat.advandroidhomework2.network.response.RawResponse;
 import com.technopark.bulat.advandroidhomework2.network.response.messages.AuthResponse;
 import com.technopark.bulat.advandroidhomework2.network.response.messages.RegisterResponse;
 import com.technopark.bulat.advandroidhomework2.network.response.messages.UserInfoResponse;
-import com.technopark.bulat.advandroidhomework2.network.socket.GlobalSocket;
-import com.technopark.bulat.advandroidhomework2.network.socket.socketObserver.Observer;
 import com.technopark.bulat.advandroidhomework2.ui.activity.MainActivity;
 
-public class RegisterFragment extends BaseFragment implements View.OnClickListener, Observer {
+public class RegisterFragment extends BaseFragment implements View.OnClickListener {
     private SharedPreferences mSharedPreferences;
     private EditText mLoginEditText;
     private EditText mPasswordEditText;
     private EditText mNicknameEditText;
     private String mLogin;
     private String mPassword;
+
     public RegisterFragment() {
         // Required empty public constructor
     }
@@ -54,20 +52,6 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
         return rootView;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        /* Subscribe to socket messages */
-        GlobalSocket.getInstance().registerObserver(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        /* Unsubscribe from socket messages */
-        GlobalSocket.getInstance().removeObserver(this);
-    }
 
     @Override
     public void onClick(View v) {
@@ -128,19 +112,19 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             String userStatus = userInfoResponse.getUser().getStatus();
-                            String nickname = userInfoResponse.getUser().getNickname();
+                            //String nickname = userInfoResponse.getUser().getNickname();
                             SharedPreferences.Editor sharedPreferencesEditor = mSharedPreferences.edit();
                             sharedPreferencesEditor.putString("status", userStatus);
-                            sharedPreferencesEditor.putString("nickname", nickname);
+                            //sharedPreferencesEditor.putString("nickname", nickname);
                             sharedPreferencesEditor.apply();
                             DrawerLayout drawerLayout = ((MainActivity) getActivity()).getDrawerLayout();
-                            ((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
+                            //((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
                             ((TextView) drawerLayout.findViewById(R.id.status)).setText(userStatus);
                         }
                     });
                     Fragment channelListFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_channel_list);
                     if (channelListFragment == null) {
-                        channelListFragment = new ChannelListFragment();
+                        channelListFragment = new ContactListFragment();
                     }
                     getActivity()
                             .getSupportFragmentManager()

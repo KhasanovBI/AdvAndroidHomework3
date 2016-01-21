@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RegisterResponse {
-    private static final String LOG_TAG = "Message: registration";
+    private static final String LOG_TAG = "MyRegisterResponse";
     private int status;
     private String error;
 

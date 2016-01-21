@@ -135,7 +135,7 @@ public class SplashScreenFragment extends BaseFragment implements OnPreloadTaskD
                     });
                     Fragment channelListFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_channel_list);
                     if (channelListFragment == null) {
-                        channelListFragment = new ChannelListFragment();
+                        channelListFragment = new ContactListFragment();
                     }
                     getActivity()
                             .getSupportFragmentManager()

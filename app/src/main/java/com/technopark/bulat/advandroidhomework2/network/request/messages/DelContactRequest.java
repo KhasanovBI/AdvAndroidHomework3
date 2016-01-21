@@ -12,14 +12,14 @@ import java.util.Map;
  * Created by bulat on 16.11.15.
  */
 public class DelContactRequest implements RequestMessage {
-    private final String uid;
     private final String cid;
     private final String sid;
+    private final String uid;
 
-    public DelContactRequest(String uid, String cid, String sid) {
-        this.uid = uid;
+    public DelContactRequest(String cid, String sid, String uid) {
         this.cid = cid;
         this.sid = sid;
+        this.uid = uid;
     }
 
     @Override

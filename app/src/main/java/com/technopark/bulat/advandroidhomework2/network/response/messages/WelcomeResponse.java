@@ -11,7 +11,7 @@ import java.util.Date;
  * Created by bulat on 13.11.15.
  */
 public class WelcomeResponse {
-    private static final String LOG_TAG = "Message: welcome";
+    private static final String LOG_TAG = "MyWelcomeResponse";
     private String message;
     private long time;
 

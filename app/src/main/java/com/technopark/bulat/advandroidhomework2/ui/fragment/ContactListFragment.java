@@ -26,13 +26,14 @@ import com.technopark.bulat.advandroidhomework2.network.response.messages.Contac
 import com.technopark.bulat.advandroidhomework2.network.response.messages.DelContactResponse;
 import com.technopark.bulat.advandroidhomework2.network.socket.GlobalSocket;
 import com.technopark.bulat.advandroidhomework2.network.socket.socketObserver.Observer;
+import com.technopark.bulat.advandroidhomework2.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework2.ui.activity.MainActivity;
 
-public class ChannelListFragment extends BaseFragment implements ChannelListAdapter.OnItemClickListener, Observer {
+public class ContactListFragment extends BaseFragment implements ChannelListAdapter.OnItemClickListener {
     private ChannelListAdapter mChannelListAdapter;
     private DialogFragment mChannelAddDialogFragment;
 
-    public ChannelListFragment() {
+    public ContactListFragment() {
         // Required empty public constructor
     }
 
@@ -59,8 +60,8 @@ public class ChannelListFragment extends BaseFragment implements ChannelListAdap
         mChannelListRecyclerView.setItemAnimator(itemAnimator);
 
         /* Subscribe to socket messages */
-        GlobalSocket.getInstance().registerObserver(this);
-        GlobalSocket.getInstance().performAsyncRequest(new ChannelListRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
+        SendServiceHelper.getInstance().registerObserver(this);
+        SendServiceHelper.getInstance().performAsyncRequest(new ChannelListRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
 
         return rootView;
     }

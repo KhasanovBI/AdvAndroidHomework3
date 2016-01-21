@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SetUserInfoResponse {
-    private static final String LOG_TAG = "Message: setUserInfo";
+    private static final String LOG_TAG = "MySetUserInfoResponse";
     private int status;
     private String error;
 

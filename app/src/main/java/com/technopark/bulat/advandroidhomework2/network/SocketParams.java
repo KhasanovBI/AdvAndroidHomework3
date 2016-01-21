@@ -1,4 +1,4 @@
-package com.technopark.bulat.advandroidhomework2.network.socket;
+package com.technopark.bulat.advandroidhomework2.network;
 
 /**
  * Created by bulat on 17.11.15.

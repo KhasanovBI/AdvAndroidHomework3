@@ -16,7 +16,7 @@ import android.view.WindowManager;
 
 import com.technopark.bulat.advandroidhomework2.R;
 import com.technopark.bulat.advandroidhomework2.ui.fragment.ChangeContactInfoFragment;
-import com.technopark.bulat.advandroidhomework2.ui.fragment.ChannelListFragment;
+import com.technopark.bulat.advandroidhomework2.ui.fragment.ContactListFragment;
 import com.technopark.bulat.advandroidhomework2.ui.fragment.SettingsFragment;
 import com.technopark.bulat.advandroidhomework2.ui.fragment.SplashScreenFragment;
 
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_channel_list:
                 Fragment channelListFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_channel_list);
                 if (channelListFragment == null) {
-                    channelListFragment = new ChannelListFragment();
+                    channelListFragment = new ContactListFragment();
                 }
                 getSupportFragmentManager()
                         .beginTransaction()

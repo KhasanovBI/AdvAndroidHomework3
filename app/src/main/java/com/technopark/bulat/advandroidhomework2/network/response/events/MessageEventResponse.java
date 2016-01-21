@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * Created by bulat on 15.11.15.
  */
 public class MessageEventResponse {
-    private static final String LOG_TAG = "Message: messageEvent";
+    private static final String LOG_TAG = "MyMessageEventResponse";
     private String channelId;
     private Message message;
 

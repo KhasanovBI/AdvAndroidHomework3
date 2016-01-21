@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * Created by bulat on 29.11.15.
  */
 public class ErrorResponse {
-    private static final String LOG_TAG = "ConnectionError";
+    private static final String LOG_TAG = "MyErrorResponse";
     private int errorCode;
 
     public ErrorResponse(JSONObject jsonData) {

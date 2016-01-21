@@ -3,7 +3,7 @@
     android:id="@+id/fragment_channel_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.ChannelListFragment">
+    tools:context=".ui.fragment.ContactListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/channel_list_recycler_view"

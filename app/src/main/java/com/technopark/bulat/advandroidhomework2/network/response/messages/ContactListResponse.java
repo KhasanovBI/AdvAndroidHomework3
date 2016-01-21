@@ -15,7 +15,7 @@ import java.util.List;
  * Created by bulat on 15.11.15.
  */
 public class ContactListResponse {
-    private static final String LOG_TAG = "Message: channelList";
+    private static final String LOG_TAG = "MyContactListResponse";
     private int status;
     private String error;
     private List<Channel> channels;

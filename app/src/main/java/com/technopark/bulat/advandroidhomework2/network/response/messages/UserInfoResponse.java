@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * Created by bulat on 15.11.15.
  */
 public class UserInfoResponse {
-    private static final String LOG_TAG = "Message: userInfo";
+    private static final String LOG_TAG = "MyUserInfoResponse";
     private int status;
     private String error;
     private User user;
@@ -22,7 +22,7 @@ public class UserInfoResponse {
             status = jsonData.getInt("status");
             if (status == 0) {
                 user = new User();
-                user.setNickname(jsonData.getString("nick"));
+               // user.setNickname(jsonData.getString("nick"));
                 user.setStatus(jsonData.getString("user_status"));
             } else {
                 error = jsonData.getString("error");

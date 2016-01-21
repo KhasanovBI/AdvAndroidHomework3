@@ -1,12 +1,10 @@
-package com.technopark.bulat.advandroidhomework2.network.socket;
+package com.technopark.bulat.advandroidhomework2.network;
 
 import android.util.Log;
 
 import com.technopark.bulat.advandroidhomework2.network.request.RequestMessage;
 import com.technopark.bulat.advandroidhomework2.network.response.RawResponse;
 import com.technopark.bulat.advandroidhomework2.network.response.messages.WelcomeResponse;
-import com.technopark.bulat.advandroidhomework2.network.socket.socketObserver.Observable;
-import com.technopark.bulat.advandroidhomework2.network.socket.socketObserver.Observer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,60 +20,17 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by bulat on 11.11.15.
+ * Created by bulat on 21.01.16.
  */
-public class GlobalSocket implements SocketParams, Observable {
-    private final List<Observer> observers = new ArrayList<>();
-    private static volatile GlobalSocket instance;
+public class SocketClient implements SocketParams {
     private static final String LOG_TAG = "GlobalSocket";
     private static Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
     private Thread asyncThread;
-
-    public static GlobalSocket getInstance() {
-        GlobalSocket localInstance = instance;
-        if (localInstance == null) {
-            synchronized (GlobalSocket.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new GlobalSocket();
-                }
-            }
-        }
-        return localInstance;
-    }
-
-    @Override
-    public void registerObserver(Observer o) {
-        synchronized (this) {
-            if (!observers.contains(o)) {
-                observers.add(o);
-            }
-        }
-    }
-
-    @Override
-    public void removeObserver(Observer o) {
-        synchronized (this) {
-            observers.remove(o);
-        }
-    }
-
-    @Override
-    public void notifyObservers(RawResponse rawResponse) {
-        synchronized (this) {
-            for (Observer observer : observers) {
-                observer.handleResponseMessage(rawResponse);
-            }
-        }
-    }
-
-    private GlobalSocket() {
+    public SocketClient() {
         turnOnAsyncThread();
     }
 
@@ -205,33 +160,21 @@ public class GlobalSocket implements SocketParams, Observable {
         return output;
     }
 
-    private class Request extends Thread {
-        private final RequestMessage requestMessage;
+    public void performRequest(RequestMessage requestMessage, SocketCallback socketCallback) {
+        String requestString = requestMessage.getRequestString();
+        Log.d(LOG_TAG, "Request: " + requestString);
 
-        Request(RequestMessage requestMessage) {
-            this.requestMessage = requestMessage;
-        }
-
-        @Override
-        public void run() {
-            String requestString = requestMessage.getRequestString();
-            Log.d(LOG_TAG, "Request: " + requestString);
-            if (socket == null || !socket.isConnected()) {
-                if (connect() == -1) {
-                    return;
-                }
-            }
-            try {
-                outputStream.write(requestString.getBytes(Charset.forName("UTF-8")));
-                outputStream.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (socket == null || !socket.isConnected()) {
+            if (connect() == -1) {
+                return;
             }
         }
-    }
-
-    public void performAsyncRequest(RequestMessage requestMessage) {
-        (new Request(requestMessage)).start();
+        try {
+            outputStream.write(requestString.getBytes(Charset.forName("UTF-8")));
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private RawResponse getRawResponse(JSONObject splitResponseJson) {
@@ -251,4 +194,5 @@ public class GlobalSocket implements SocketParams, Observable {
         }
         return null;
     }
+
 }

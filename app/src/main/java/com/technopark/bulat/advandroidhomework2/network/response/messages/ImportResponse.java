@@ -17,10 +17,10 @@ import java.util.List;
  * Created by bulat on 15.11.15.
  */
 public class ImportResponse {
-    private static final String LOG_TAG = "Message: enterChat";
+    private static final String LOG_TAG = "MyImportResponse";
     private int status;
     private List<User> users;
-    private List<com.technopark.bulat.advandroidhomework2.models.Message> lastMessages;
+    private List<Message> lastMessages;
     private String error;
 
     public ImportResponse(JSONObject jsonData) {
@@ -33,8 +33,8 @@ public class ImportResponse {
                 for (int i = 0; i < jsonUsers.length(); ++i) {
                     JSONObject jsonUser = (JSONObject) jsonUsers.get(i);
                     User user = new User();
-                    user.setId(jsonUser.getString("uid"));
-                    user.setNickname(jsonUser.getString("nick"));
+                    //user.setId(jsonUser.getString("uid"));
+                    //user.setNickname(jsonUser.getString("nick"));
                     users.add(user);
                 }
                 lastMessages = new ArrayList<>();

@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * Created by bulat on 15.11.15.
  */
 public class MessageResponse {
-    private static final String LOG_TAG = "Message: sendMessage";
+    private static final String LOG_TAG = "MyMessageResponse";
     private int status;
     private String error;
 
