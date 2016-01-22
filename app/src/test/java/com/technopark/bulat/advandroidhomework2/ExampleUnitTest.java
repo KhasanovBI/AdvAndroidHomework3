@@ -1,4 +1,4 @@
-package com.technopark.bulat.advandroidhomework2;
+package com.technopark.bulat.advandroidhomework3;
 
 import org.junit.Test;
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.technopark.bulat.advandroidhomework2">
+    package="com.technopark.bulat.advandroidhomework3">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name="com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -27,7 +27,7 @@
         </activity>
 
         <service
-            android:name=".service.SendService"
+            android:name="com.technopark.bulat.advandroidhomework3.service.SendService"
             android:exported="false"></service>
     </application>
 
