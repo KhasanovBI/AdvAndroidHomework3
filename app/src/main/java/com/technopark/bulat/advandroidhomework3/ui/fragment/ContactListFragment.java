@@ -18,19 +18,17 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
-import com.technopark.bulat.advandroidhomework3.adapters.ChannelListAdapter;
-import com.technopark.bulat.advandroidhomework3.models.Channel;
-import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
-import com.technopark.bulat.advandroidhomework3.network.response.BaseResponse;
+import com.technopark.bulat.advandroidhomework3.adapters.UserListAdapter;
+import com.technopark.bulat.advandroidhomework3.models.User;
+import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.ContactListResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.DelContactResponse;
-import com.technopark.bulat.advandroidhomework3.network.socket.GlobalSocket;
-import com.technopark.bulat.advandroidhomework3.network.socket.socketObserver.Observer;
-import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 
-public class ContactListFragment extends BaseFragment implements ChannelListAdapter.OnItemClickListener {
-    private ChannelListAdapter mChannelListAdapter;
+import org.json.JSONObject;
+
+public class ContactListFragment extends BaseFragment implements UserListAdapter.OnItemClickListener {
+    private UserListAdapter mUserListAdapter;
     private DialogFragment mChannelAddDialogFragment;
 
     public ContactListFragment() {
@@ -50,30 +48,30 @@ public class ContactListFragment extends BaseFragment implements ChannelListAdap
         prepareView();
         View rootView = inflater.inflate(R.layout.fragment_channel_list, container, false);
         RecyclerView mChannelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.channel_list_recycler_view);
-        mChannelListAdapter = new ChannelListAdapter();
+        mUserListAdapter = new UserListAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
 
-        mChannelListAdapter.setOnItemClickListener(this);
-        mChannelListRecyclerView.setAdapter(mChannelListAdapter);
+        mUserListAdapter.setOnItemClickListener(this);
+        mChannelListRecyclerView.setAdapter(mUserListAdapter);
         mChannelListRecyclerView.setLayoutManager(linearLayoutManager);
         mChannelListRecyclerView.setItemAnimator(itemAnimator);
 
         /* Subscribe to socket messages */
-        SendServiceHelper.getInstance().registerObserver(this);
-        SendServiceHelper.getInstance().performAsyncRequest(new ChannelListRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
+        // SendServiceHelper.getInstance().registerObserver(this);
+        // SendServiceHelper.getInstance().performAsyncRequest(new ChannelListRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
 
         return rootView;
     }
 
     @Override
-    public void onItemClick(ChannelListAdapter.ChannelViewHolder item, int position) {
-        Channel channel = mChannelListAdapter.getChannelList().get(position);
+    public void onItemClick(UserListAdapter.UserViewHolder item, int position) {
+        User channel = mUserListAdapter.getUserList().get(position);
         Fragment chatFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_chat);
         if (chatFragment == null) {
             chatFragment = new ChatFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Channel.descriptionKey, channel);
+           // bundle.putSerializable(Channel.descriptionKey, channel);
             chatFragment.setArguments(bundle);
         }
         getActivity().getSupportFragmentManager()
@@ -100,14 +98,19 @@ public class ContactListFragment extends BaseFragment implements ChannelListAdap
     @Override
     public void onResume() {
         super.onResume();
-        GlobalSocket.getInstance().registerObserver(this);
+        //GlobalSocket.getInstance().registerObserver(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         /* Unsubscribe from socket messages */
-        GlobalSocket.getInstance().removeObserver(this);
+        //GlobalSocket.getInstance().removeObserver(this);
+    }
+
+    @Override
+    protected void handleResponse(String action, JSONObject jsonData) {
+
     }
 
     @Override
@@ -116,8 +119,7 @@ public class ContactListFragment extends BaseFragment implements ChannelListAdap
         inflater.inflate(R.menu.menu_channel_list, menu);
     }
 
-    @Override
-    public void handleResponseMessage(BaseResponse rawResponse) {
+    public void handleResponseMessage(GeneralResponse rawResponse) {
         String action = rawResponse.getAction();
         switch (action) {
             case "channellist":
@@ -126,8 +128,8 @@ public class ContactListFragment extends BaseFragment implements ChannelListAdap
                 if (status == 0) {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
-                            for (Channel channel : channelListResponse.getChannels()) {
-                                mChannelListAdapter.add(channel);
+                            for (User channel : channelListResponse.getUsers()) {
+                                mUserListAdapter.add(channel);
                             }
                         }
                     });

@@ -10,16 +10,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
-import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
 import com.technopark.bulat.advandroidhomework3.models.User;
-import com.technopark.bulat.advandroidhomework3.network.request.messages.UserInfoRequest;
-import com.technopark.bulat.advandroidhomework3.network.response.BaseResponse;
+import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.UserInfoResponse;
-import com.technopark.bulat.advandroidhomework3.network.socket.GlobalSocket;
-import com.technopark.bulat.advandroidhomework3.network.socket.socketObserver.Observer;
+
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 
-public class ContactInfoFragment extends BaseFragment implements Observer {
+import org.json.JSONObject;
+
+public class ContactInfoFragment extends BaseFragment {
     public static final String descriptionKey = "UserInfo";
     private String mUserId;
     private TextView mNicknameTextView;
@@ -44,15 +43,14 @@ public class ContactInfoFragment extends BaseFragment implements Observer {
         mStatusTextView = (TextView) rootView.findViewById(R.id.contact_info_status);
 
         /* Subscribe to socket messages */
-        GlobalSocket.getInstance().registerObserver(this);
-        GlobalSocket.getInstance().performAsyncRequest(new UserInfoRequest(mUserId, GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
-
+//        GlobalSocket.getInstance().registerObserver(this);
+//        GlobalSocket.getInstance().performAsyncRequest(new UserInfoRequest(mUserId, GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
         return rootView;
     }
 
     @Override
     public void onResume() {
-        GlobalSocket.getInstance().registerObserver(this);
+        //GlobalSocket.getInstance().registerObserver(this);
         super.onResume();
     }
 
@@ -60,18 +58,22 @@ public class ContactInfoFragment extends BaseFragment implements Observer {
     public void onPause() {
         super.onPause();
         /* Unsubscribe from socket messages */
-        GlobalSocket.getInstance().removeObserver(this);
+//        GlobalSocket.getInstance().removeObserver(this);
     }
 
     @Override
-    public void handleResponseMessage(BaseResponse rawResponse) {
+    protected void handleResponse(String action, JSONObject jsonData) {
+
+    }
+
+    public void handleResponseMessage(GeneralResponse rawResponse) {
         if (rawResponse.getAction().equals("userinfo")) {
             final UserInfoResponse userInfoResponse = new UserInfoResponse(rawResponse.getJsonData());
             if (userInfoResponse.getStatus() == 0) {
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
                         User user = userInfoResponse.getUser();
-                        mNicknameTextView.setText(user.getNickname());
+//                        mNicknameTextView.setText(user.getNickname());
                         mStatusTextView.setText(user.getStatus());
                     }
                 });

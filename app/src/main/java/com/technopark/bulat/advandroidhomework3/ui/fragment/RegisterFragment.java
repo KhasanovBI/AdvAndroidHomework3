@@ -14,14 +14,13 @@ import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
-import com.technopark.bulat.advandroidhomework3.network.request.messages.AuthRequest;
-import com.technopark.bulat.advandroidhomework3.network.request.messages.RegisterRequest;
-import com.technopark.bulat.advandroidhomework3.network.request.messages.UserInfoRequest;
-import com.technopark.bulat.advandroidhomework3.network.response.BaseResponse;
+import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AuthResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.RegisterResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.UserInfoResponse;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
+
+import org.json.JSONObject;
 
 public class RegisterFragment extends BaseFragment implements View.OnClickListener {
     private SharedPreferences mSharedPreferences;
@@ -65,18 +64,17 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                 sharedPreferencesEditor.putString("password", mPassword);
                 sharedPreferencesEditor.putString("nickname", nickname);
                 sharedPreferencesEditor.apply();
-                GlobalSocket.getInstance().performAsyncRequest(new RegisterRequest(mLogin, mPassword, nickname));
+                //GlobalSocket.getInstance().performAsyncRequest(new RegisterRequest(mLogin, mPassword, nickname));
             }
         }
     }
 
-    @Override
-    public void handleResponseMessage(BaseResponse rawResponse) {
+    public void handleResponseMessage(GeneralResponse rawResponse) {
         switch (rawResponse.getAction()) {
             case "register":
                 final RegisterResponse registrationResponse = new RegisterResponse(rawResponse.getJsonData());
                 if (registrationResponse.getStatus() == 0) {
-                    GlobalSocket.getInstance().performAsyncRequest(new AuthRequest(mLogin, mPassword));
+                  //  GlobalSocket.getInstance().performAsyncRequest(new AuthRequest(mLogin, mPassword));
                 } else {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
@@ -91,13 +89,13 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                 if (status == 0) {
                     GlobalUserIds.getInstance().cid = authResponse.getCid();
                     GlobalUserIds.getInstance().sid = authResponse.getSid();
-                    GlobalSocket.getInstance().performAsyncRequest(
+                    /*GlobalSocket.getInstance().performAsyncRequest(
                             new UserInfoRequest(
                                     GlobalUserIds.getInstance().cid,
                                     GlobalUserIds.getInstance().cid,
                                     GlobalUserIds.getInstance().sid
                             )
-                    );
+                    );*/
                 } else {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
@@ -140,5 +138,10 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void handleResponse(String action, JSONObject jsonData) {
+
     }
 }

@@ -45,7 +45,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     public void onBindViewHolder(MessageViewHolder holder, int position) {
         Message message = messages.get(position);
         holder.mMessageText.setText(message.getText());
-        holder.mMessageAuthor.setText(message.getAuthorNickname());
+        holder.mMessageAuthor.setText(message.getUserNick());
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (messages.get(position).getAuthorId().equals(GlobalUserIds.getInstance().cid)) {
+        if (messages.get(position).getUserId().equals(GlobalUserIds.getInstance().cid)) {
             return CURRENT_USER;
         } else
             return ANOTHER_USER;

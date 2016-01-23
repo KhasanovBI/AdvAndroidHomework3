@@ -1,4 +1,4 @@
-package com.technopark.bulat.advandroidhomework3.network.response.messages;
+package com.technopark.bulat.advandroidhomework3.network.response.welcomeMessage;
 
 import android.util.Log;
 

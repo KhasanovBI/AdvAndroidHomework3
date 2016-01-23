@@ -8,38 +8,37 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.technopark.bulat.advandroidhomework3.R;
+import com.technopark.bulat.advandroidhomework3.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.technopark.bulat.advandroidhomework3.models.Channel;
-
 /**
  * Created by bulat on 07.11.15.
  */
-public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.ChannelViewHolder> {
-    private final List<Channel> channelList;
+public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserViewHolder> {
+    private final List<User> channelList;
     private OnItemClickListener onItemClickListener;
 
-    public ChannelListAdapter() {
+    public UserListAdapter() {
         channelList = new ArrayList<>();
     }
 
-    public List<Channel> getChannelList() {
+    public List<User> getUserList() {
         return channelList;
     }
 
     @Override
-    public ChannelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channel, parent, false);
-        return new ChannelViewHolder(view);
+        return new UserViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ChannelViewHolder holder, int position) {
-        Channel channel = channelList.get(position);
-        holder.mName.setText(String.format("%s (%d)", channel.getName(), channel.getOnlineCount()));
-        holder.mDescription.setText(channel.getDescription());
+    public void onBindViewHolder(UserViewHolder holder, int position) {
+        User channel = channelList.get(position);
+        //holder.mName.setText(String.format("%s (%d)", channel.getName(), channel.getOnlineCount()));
+        //holder.mDescription.setText(channel.getDescription());
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
         return channelList.size();
     }
 
-    public void add(Channel channel) {
+    public void add(User channel) {
         channelList.add(channel);
         notifyItemInserted(getItemCount());
     }
@@ -61,14 +60,14 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
     }
 
     public interface OnItemClickListener {
-        void onItemClick(ChannelViewHolder item, int position);
+        void onItemClick(UserViewHolder item, int position);
     }
 
-    public class ChannelViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+    public class UserViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         private final TextView mName;
         private final TextView mDescription;
 
-        public ChannelViewHolder(View itemView) {
+        public UserViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             mName = (TextView) itemView.findViewById(R.id.channel_name);

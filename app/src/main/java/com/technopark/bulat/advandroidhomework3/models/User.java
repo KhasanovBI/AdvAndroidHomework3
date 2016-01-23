@@ -1,20 +1,30 @@
 package com.technopark.bulat.advandroidhomework3.models;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by bulat on 08.11.15.
  */
-public class User implements Serializable {
+public class User implements Parcelable {
+    private String uid;
     private String login;
     private String pass;
-    private String name;
+    private String nick;
     private String status;
     private String email;
     private String phone;
     private String picture;
 
     public User() {
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getLogin() {
@@ -33,12 +43,12 @@ public class User implements Serializable {
         this.pass = pass;
     }
 
-    public String getName() {
-        return name;
+    public String getNick() {
+        return nick;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     public String getStatus() {
@@ -71,5 +81,46 @@ public class User implements Serializable {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    protected User(Parcel in) {
+        uid = in.readString();
+        login = in.readString();
+        pass = in.readString();
+        nick = in.readString();
+        status = in.readString();
+        email = in.readString();
+        phone = in.readString();
+        picture = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+
+    @Override
+    public int describeContents() {
+        return this.hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uid);
+        dest.writeString(login);
+        dest.writeString(pass);
+        dest.writeString(nick);
+        dest.writeString(status);
+        dest.writeString(email);
+        dest.writeString(phone);
+        dest.writeString(picture);
     }
 }

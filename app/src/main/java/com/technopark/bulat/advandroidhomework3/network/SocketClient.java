@@ -44,10 +44,10 @@ public class SocketClient implements SocketParams {
             @Override
             public void run() {
                 while (isNeedRun) {
-                    List<JSONObject> responseJSONObjectArray = getResponses();
-                    if (responseJSONObjectArray != null) {
-                        for (JSONObject responseJSONObject : responseJSONObjectArray) {
-                            socketCallback.send(new SocketResponseMessage(responseJSONObject));
+                    List<String> stringResponses = getResponses();
+                    if (stringResponses != null) {
+                        for (String stringResponse : stringResponses) {
+                            socketCallback.send(new SocketResponseMessage(stringResponse));
                         }
                         threadSleep(SOCKET_CHECK_TIME);
                     }
@@ -108,7 +108,7 @@ public class SocketClient implements SocketParams {
         return socket != null && socket.isConnected() || connect();
     }
 
-    private List<JSONObject> getResponses() {
+    private List<String> getResponses() {
         String socketOutputString = null;
         if (checkConnection()) {
             try {
@@ -154,23 +154,25 @@ public class SocketClient implements SocketParams {
         return parseSocketOutput(socketOutputString);
     }
 
-    private List<JSONObject> parseSocketOutput(String socketOutputString) {
-        List<JSONObject> jsonResponses = null;
+    private List<String> parseSocketOutput(String socketOutputString) {
+        List<String> stringResponses = null;
         if (socketOutputString != null && socketOutputString.length() > 0) {
-            jsonResponses = new ArrayList<>();
+            stringResponses = new ArrayList<>();
             try {
                 do {
                     /* Из socket может быть прочитано более 1 строки. */
                     JSONObject splitResponseJson = new JSONObject(socketOutputString);
-                    int splitResponseStringLength = splitResponseJson.toString().length();
-                    jsonResponses.add(splitResponseJson);
+                    String stringResponse = splitResponseJson.toString();
+                    int splitResponseStringLength = stringResponse.length();
+                    stringResponses.add(stringResponse);
+                    Log.d(LOG_TAG, "Response: " + stringResponse);
                     socketOutputString = socketOutputString.substring(splitResponseStringLength);
                 } while (socketOutputString.length() > 0);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return jsonResponses;
+        return stringResponses;
     }
 
     public void performRequest(RequestMessage requestMessage) {

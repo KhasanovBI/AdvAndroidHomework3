@@ -1,6 +1,6 @@
 package com.technopark.bulat.advandroidhomework3.network.request.messages;
 
-import com.technopark.bulat.advandroidhomework3.models.Contact;
+import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.network.request.RequestMessage;
 
 import org.json.JSONArray;
@@ -13,9 +13,9 @@ import java.util.List;
  * Created by bulat on 16.11.15.
  */
 public class ImportRequest implements RequestMessage {
-    private final List<Contact> contacts;
+    private final List<User> contacts;
 
-    public ImportRequest(List<Contact> contacts) {
+    public ImportRequest(List<User> contacts) {
         this.contacts = contacts;
     }
 
@@ -24,10 +24,10 @@ public class ImportRequest implements RequestMessage {
         JSONObject jsonObject = new JSONObject();
         try {
             JSONArray jsonContactsArray = new JSONArray();
-            for (Contact contact : contacts) {
+            for (User contact : contacts) {
                 JSONObject jsonContact = new JSONObject();
-                jsonContact.put("myid", contact.getMyid());
-                jsonContact.put("name", contact.getName());
+                jsonContact.put("myid", contact.getUid());
+                jsonContact.put("name", contact.getNick());
                 jsonContact.put("phone", contact.getPhone());
                 jsonContact.put("email", contact.getEmail());
                 jsonContactsArray.put(jsonContact);

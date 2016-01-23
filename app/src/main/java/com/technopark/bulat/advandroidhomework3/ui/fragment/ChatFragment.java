@@ -16,23 +16,23 @@ import android.widget.EditText;
 
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.adapters.ChatAdapter;
-import com.technopark.bulat.advandroidhomework3.models.Channel;
-import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
 import com.technopark.bulat.advandroidhomework3.models.Message;
-import com.technopark.bulat.advandroidhomework3.network.response.BaseResponse;
+import com.technopark.bulat.advandroidhomework3.models.User;
+import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.events.MessageEventResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.ImportResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.MessageResponse;
-import com.technopark.bulat.advandroidhomework3.network.socket.GlobalSocket;
-import com.technopark.bulat.advandroidhomework3.network.socket.socketObserver.Observer;
+
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
-public class ChatFragment extends BaseFragment implements OnClickListener, ChatAdapter.OnItemClickListener, Observer {
+public class ChatFragment extends BaseFragment implements OnClickListener, ChatAdapter.OnItemClickListener {
     private static final String LOG_TAG = "ChatFragment";
     private ChatAdapter mChatAdapter;
-    private Channel mChannel;
+    private User mUser;
     private EditText mMessageEditText;
     private RecyclerView mChatRecyclerView;
 
@@ -45,7 +45,7 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mChannel = (Channel) getArguments().getSerializable(Channel.descriptionKey);
+        //mChannel = (User) getArguments().getSerializable(User.descriptionKey);
 
         prepareView();
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
@@ -64,8 +64,8 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
         rootView.findViewById(R.id.send_button).setOnClickListener(this);
 
         /* Subscribe to socket messages */
-        GlobalSocket.getInstance().registerObserver(this);
-        GlobalSocket.getInstance().performAsyncRequest(new EnterChatRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid, mChannel.getId()));
+//        GlobalSocket.getInstance().registerObserver(this);
+//        GlobalSocket.getInstance().performAsyncRequest(new EnterChatRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid, mChannel.getId()));
 
         return rootView;
     }
@@ -73,14 +73,19 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
     @Override
     public void onResume() {
         super.onResume();
-        GlobalSocket.getInstance().registerObserver(this);
+//        GlobalSocket.getInstance().registerObserver(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         /* Unsubscribe from socket messages */
-        GlobalSocket.getInstance().removeObserver(this);
+//        GlobalSocket.getInstance().removeObserver(this);
+    }
+
+    @Override
+    protected void handleResponse(String action, JSONObject jsonData) {
+
     }
 
     @Override
@@ -101,7 +106,7 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
         if (contactInfoFragment == null) {
             contactInfoFragment = new ContactInfoFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(ContactInfoFragment.descriptionKey, mChatAdapter.getMessages().get(position).getAuthorId());
+            bundle.putString(ContactInfoFragment.descriptionKey, mChatAdapter.getMessages().get(position).getUserId());
             contactInfoFragment.setArguments(bundle);
         }
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -109,16 +114,15 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
         transaction.replace(R.id.fragments_container, contactInfoFragment).commit();
     }
 
-    @Override
-    public void handleResponseMessage(BaseResponse rawResponse) {
+    public void handleResponseMessage(GeneralResponse rawResponse) {
         String action = rawResponse.getAction();
         switch (action) {
             case "enter":
                 ImportResponse enterChatResponse = new ImportResponse(rawResponse.getJsonData());
-                List<Message> messageList = enterChatResponse.getLastMessages();
-                for (Message message : messageList) {
-                    mChatAdapter.add(message);
-                }
+//                List<Message> messageList = enterChatResponse.getUsers();
+//                for (Message message : messageList) {
+//                    mChatAdapter.add(message);
+//                }
                 break;
             case "message":
                 final MessageResponse sendMessageResponse = new MessageResponse(rawResponse.getJsonData());
@@ -152,7 +156,7 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
         MainActivity mainActivity = (MainActivity) getActivity();
         ActionBar actionBar = mainActivity.getSupportActionBar();
         assert actionBar != null;
-        actionBar.setTitle(mChannel.getName());
+        //actionBar.setTitle(mChannel.getName());
         actionBar.setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_white_24dp);
         actionBar.setIcon(R.drawable.ic_public_white_24dp);
     }

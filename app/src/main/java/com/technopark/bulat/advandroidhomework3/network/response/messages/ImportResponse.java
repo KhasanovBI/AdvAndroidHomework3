@@ -2,74 +2,47 @@ package com.technopark.bulat.advandroidhomework3.network.response.messages;
 
 import android.util.Log;
 
-import com.technopark.bulat.advandroidhomework3.models.Message;
 import com.technopark.bulat.advandroidhomework3.models.User;
+import com.technopark.bulat.advandroidhomework3.network.response.messages.base.ResponseMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by bulat on 15.11.15.
  */
-public class ImportResponse {
+public class ImportResponse extends ResponseMessage {
     private static final String LOG_TAG = "MyImportResponse";
-    private int status;
     private List<User> users;
-    private List<Message> lastMessages;
-    private String error;
 
     public ImportResponse(JSONObject jsonData) {
+        super(jsonData);
         Log.d(LOG_TAG, jsonData.toString());
-        try {
-            status = jsonData.getInt("status");
-            if (status == 0) {
+        if (status == 0) {
+            try {
                 users = new ArrayList<>();
-                JSONArray jsonUsers = jsonData.getJSONArray("users");
+                JSONArray jsonUsers = jsonData.getJSONArray("list");
                 for (int i = 0; i < jsonUsers.length(); ++i) {
                     JSONObject jsonUser = (JSONObject) jsonUsers.get(i);
                     User user = new User();
-                    //user.setId(jsonUser.getString("uid"));
-                    //user.setNickname(jsonUser.getString("nick"));
+                    // не стал парсить myid
+                    user.setUid(jsonUser.getString("uid"));
+                    user.setNick(jsonUser.getString("nick"));
+                    user.setEmail(jsonUser.getString("email"));
+                    user.setPhone(jsonData.getString("phone"));
                     users.add(user);
                 }
-                lastMessages = new ArrayList<>();
-                JSONArray jsonLastMessages = jsonData.getJSONArray("last_msg");
-                for (int i = 0; i < jsonLastMessages.length(); ++i) {
-                    JSONObject jsonMessage = (JSONObject) jsonLastMessages.get(i);
-                    Message message = new Message();
-                    message.setId(jsonMessage.getString("mid"));
-                    message.setAuthorId(jsonMessage.getString("from"));
-                    message.setAuthorNickname(jsonMessage.getString("nick"));
-                    message.setText(jsonMessage.getString("body"));
-                    message.setTime(new Date(jsonMessage.getLong("time")));
-                    lastMessages.add(message);
-                }
-            } else {
-                error = jsonData.getString("error");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-    }
-
-    public int getStatus() {
-        return status;
     }
 
     public List<User> getUsers() {
         return users;
-    }
-
-    public List<Message> getLastMessages() {
-        return lastMessages;
-    }
-
-    public String getError() {
-        return error;
     }
 }

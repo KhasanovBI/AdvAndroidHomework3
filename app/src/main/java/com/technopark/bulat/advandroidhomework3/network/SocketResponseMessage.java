@@ -9,21 +9,21 @@ import java.io.Serializable;
  */
 public class SocketResponseMessage implements Serializable {
     private int connectionError = -1;
-    private JSONObject jsonResponse;
+    private String stringResponse;
 
     public SocketResponseMessage(int connectionError) {
         this.connectionError = connectionError;
     }
 
-    public SocketResponseMessage(JSONObject jsonResponse) {
-        this.jsonResponse = jsonResponse;
+    public SocketResponseMessage(String stringResponse) {
+        this.stringResponse = stringResponse;
     }
 
     public int getConnectionError() {
         return connectionError;
     }
 
-    public JSONObject getJsonResponse() {
-        return jsonResponse;
+    public String getStringResponse() {
+        return stringResponse;
     }
 }

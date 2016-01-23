@@ -2,7 +2,8 @@ package com.technopark.bulat.advandroidhomework3.network.response.messages;
 
 import android.util.Log;
 
-import com.technopark.bulat.advandroidhomework3.models.Channel;
+import com.technopark.bulat.advandroidhomework3.models.User;
+import com.technopark.bulat.advandroidhomework3.network.response.messages.base.ResponseMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,45 +15,35 @@ import java.util.List;
 /**
  * Created by bulat on 15.11.15.
  */
-public class ContactListResponse {
+public class ContactListResponse extends ResponseMessage {
     private static final String LOG_TAG = "MyContactListResponse";
-    private int status;
-    private String error;
-    private List<Channel> channels;
+    private List<User> users;
 
     public ContactListResponse(JSONObject jsonData) {
+        super(jsonData);
         Log.d(LOG_TAG, jsonData.toString());
-        try {
-            status = jsonData.getInt("status");
-            if (status == 0) {
-                channels = new ArrayList<>();
-                JSONArray jsonChannels = jsonData.getJSONArray("channels");
-                for (int i = 0; i < jsonChannels.length(); ++i) {
-                    JSONObject jsonChannel = (JSONObject) jsonChannels.get(i);
-                    Channel channel = new Channel();
-                    channel.setId(jsonChannel.getString("chid"));
-                    channel.setName(jsonChannel.getString("name"));
-                    channel.setDescription(jsonChannel.getString("descr"));
-                    channel.setOnlineCount(jsonChannel.getInt("online"));
-                    channels.add(channel);
+        if (status == 0) {
+            try {
+                users = new ArrayList<>();
+                JSONArray jsonUsers = jsonData.getJSONArray("list");
+                for (int i = 0; i < jsonUsers.length(); ++i) {
+                    JSONObject jsonUser = (JSONObject) jsonUsers.get(i);
+                    User user = new User();
+                    // не стал парсить myid
+                    user.setUid(jsonUser.getString("uid"));
+                    user.setNick(jsonUser.getString("nick"));
+                    user.setEmail(jsonUser.getString("email"));
+                    user.setPhone(jsonData.getString("phone"));
+                    user.setPicture(jsonData.getString("picture"));
+                    users.add(user);
                 }
-            } else {
-                error = jsonData.getString("error");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public List<Channel> getChannels() {
-        return channels;
+    public List<User> getUsers() {
+        return users;
     }
 }

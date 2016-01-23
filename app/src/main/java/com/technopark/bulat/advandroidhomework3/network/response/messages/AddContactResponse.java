@@ -2,47 +2,34 @@ package com.technopark.bulat.advandroidhomework3.network.response.messages;
 
 import android.util.Log;
 
-import com.technopark.bulat.advandroidhomework3.network.response.BaseResponse;
+import com.technopark.bulat.advandroidhomework3.models.User;
+import com.technopark.bulat.advandroidhomework3.network.response.messages.base.ResponseMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AddContactResponse extends BaseResponse{
+public class AddContactResponse extends ResponseMessage {
     private static final String LOG_TAG = "MyAddContactResponse";
-    private int status;
-    private String error;
-    private String sid;
-    private String cid;
+    private User user;
 
     public AddContactResponse(JSONObject jsonData) {
+        super(jsonData);
         Log.d(LOG_TAG, jsonData.toString());
-        try {
-
-            status = jsonData.getInt("status");
-            if (status == 0) {
-                sid = jsonData.getString("sid");
-                cid = jsonData.getString("cid");
-            } else {
-                error = jsonData.getString("error");
+        if (status == 0) {
+            try {
+                user = new User();
+                JSONObject jsonUser = jsonData.getJSONObject("user");
+                user.setUid(jsonUser.getString("uid"));
+                user.setNick(jsonUser.getString("nick"));
+                user.setEmail(jsonUser.getString("email"));
+                user.setPhone(jsonUser.getString("phone"));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public String getSid() {
-        return sid;
-    }
-
-    public String getCid() {
-        return cid;
+    public User getUser() {
+        return user;
     }
 }

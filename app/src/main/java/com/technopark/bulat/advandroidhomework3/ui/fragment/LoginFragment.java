@@ -16,10 +16,12 @@ import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
-import com.technopark.bulat.advandroidhomework3.network.response.BaseResponse;
+import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AuthResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.UserInfoResponse;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
+
+import org.json.JSONObject;
 
 public class LoginFragment extends BaseFragment implements OnClickListener {
     private SharedPreferences mSharedPreferences;
@@ -85,7 +87,12 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
      /*   GlobalSocket.getInstance().removeObserver(this);*/
     }
 
-    public void handleResponseMessage(BaseResponse rawResponse) {
+    @Override
+    protected void handleResponse(String action, JSONObject jsonData) {
+
+    }
+
+    public void handleResponseMessage(GeneralResponse rawResponse) {
         switch (rawResponse.getAction()) {
             case "auth":
                 final AuthResponse authResponse = new AuthResponse(rawResponse.getJsonData());

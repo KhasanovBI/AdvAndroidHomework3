@@ -6,12 +6,11 @@ import java.util.Date;
  * Created by bulat on 08.11.15.
  */
 public class Message {
-    private String id;
-    private String authorId;
-    private String authorNickname;
+    private String userId;
+    private String userNick;
     private String text;
     private Date time;
-    private String channelId;
+    private Attach attach;
 
     public Date getTime() {
         return time;
@@ -21,28 +20,20 @@ public class Message {
         this.time = time;
     }
 
-    public String getAuthorNickname() {
-        return authorNickname;
+    public String getUserNick() {
+        return userNick;
     }
 
-    public void setAuthorNickname(String authorNickname) {
-        this.authorNickname = authorNickname;
+    public void setUserNick(String userNick) {
+        this.userNick = userNick;
     }
 
-    public String getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getText() {
@@ -53,11 +44,11 @@ public class Message {
         this.text = text;
     }
 
-    public String getChannelId() {
-        return channelId;
+    public Attach getAttach() {
+        return attach;
     }
 
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
+    public void setAttach(Attach attach) {
+        this.attach = attach;
     }
 }

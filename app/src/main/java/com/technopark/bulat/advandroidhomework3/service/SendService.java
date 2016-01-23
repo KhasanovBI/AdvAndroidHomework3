@@ -6,7 +6,6 @@ import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 
 import com.technopark.bulat.advandroidhomework3.models.Attach;
-import com.technopark.bulat.advandroidhomework3.models.Contact;
 import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.network.SocketCallback;
 import com.technopark.bulat.advandroidhomework3.network.SocketClient;
@@ -21,9 +20,7 @@ import com.technopark.bulat.advandroidhomework3.network.request.messages.Message
 import com.technopark.bulat.advandroidhomework3.network.request.messages.RegisterRequest;
 import com.technopark.bulat.advandroidhomework3.network.request.messages.SetUserInfoRequest;
 import com.technopark.bulat.advandroidhomework3.network.request.messages.UserInfoRequest;
-import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class SendService extends IntentService {
@@ -137,7 +134,7 @@ public class SendService extends IntentService {
                 break;
             }
             case IMPORT: {
-                List<Contact> contacts = mOriginalRequestIntent.getParcelableArrayListExtra(IMPORT_CONTACTS_EXTRA);
+                List<User> contacts = mOriginalRequestIntent.getParcelableArrayListExtra(IMPORT_CONTACTS_EXTRA);
                 requestMessage = new ImportRequest(contacts);
                 break;
             }

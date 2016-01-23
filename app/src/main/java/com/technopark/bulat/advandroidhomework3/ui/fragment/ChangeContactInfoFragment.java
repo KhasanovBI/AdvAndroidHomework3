@@ -15,15 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
-import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
-import com.technopark.bulat.advandroidhomework3.network.request.messages.SetUserInfoRequest;
-import com.technopark.bulat.advandroidhomework3.network.response.BaseResponse;
+import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.SetUserInfoResponse;
-import com.technopark.bulat.advandroidhomework3.network.socket.GlobalSocket;
-import com.technopark.bulat.advandroidhomework3.network.socket.socketObserver.Observer;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 
-public class ChangeContactInfoFragment extends BaseFragment implements Observer, OnClickListener {
+import org.json.JSONObject;
+
+public class ChangeContactInfoFragment extends BaseFragment implements OnClickListener {
     private EditText mStatusEditText;
     private SharedPreferences mSharedPreferences;
 
@@ -50,14 +48,19 @@ public class ChangeContactInfoFragment extends BaseFragment implements Observer,
     public void onResume() {
         super.onResume();
         /* Subscribe to socket messages */
-        GlobalSocket.getInstance().registerObserver(this);
+        //GlobalSocket.getInstance().registerObserver(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         /* Unsubscribe from socket messages */
-        GlobalSocket.getInstance().removeObserver(this);
+        //GlobalSocket.getInstance().removeObserver(this);
+    }
+
+    @Override
+    protected void handleResponse(String action, JSONObject jsonData) {
+
     }
 
     @Override
@@ -76,19 +79,18 @@ public class ChangeContactInfoFragment extends BaseFragment implements Observer,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.contact_info_save_button:
-                GlobalSocket.getInstance().performAsyncRequest(
-                        new SetUserInfoRequest(
-                                GlobalUserIds.getInstance().cid,
-                                GlobalUserIds.getInstance().sid,
-                                mStatusEditText.getText().toString()
-                        )
-                );
+//                GlobalSocket.getInstance().performAsyncRequest(
+//                        new SetUserInfoRequest(
+//                                GlobalUserIds.getInstance().cid,
+//                                GlobalUserIds.getInstance().sid,
+//                                mStatusEditText.getText().toString()
+//                        )
+//                );
                 break;
         }
     }
 
-    @Override
-    public void handleResponseMessage(BaseResponse rawResponse) {
+    public void handleResponseMessage(GeneralResponse rawResponse) {
         if (rawResponse.getAction().equals("setuserinfo")) {
             final SetUserInfoResponse setUserInfoResponse = new SetUserInfoResponse(rawResponse.getJsonData());
             if (setUserInfoResponse.getStatus() == 0) {

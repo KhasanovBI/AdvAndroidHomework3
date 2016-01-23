@@ -2,31 +2,28 @@ package com.technopark.bulat.advandroidhomework3.network.response.messages;
 
 import android.util.Log;
 
+import com.technopark.bulat.advandroidhomework3.network.response.messages.base.ResponseMessage;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DelContactResponse {
+public class DelContactResponse extends ResponseMessage {
     private static final String LOG_TAG = "MyDelContactResponse";
-    private int status;
-    private String error;
+    private String uid;
 
     public DelContactResponse(JSONObject jsonData) {
+        super(jsonData);
         Log.d(LOG_TAG, jsonData.toString());
-        try {
-            status = jsonData.getInt("status");
-            if (status != 0) {
-                error = jsonData.getString("error");
+        if (status == 0) {
+            try {
+                uid = jsonData.getString("uid");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public String getError() {
-        return error;
+    public String getUid() {
+        return uid;
     }
 }
