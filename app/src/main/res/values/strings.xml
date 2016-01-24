@@ -22,7 +22,7 @@
     <string name="channel_name">Имя канала</string>
     <string name="channel_description">Короткое описание</string>
     <string name="new_channel">Новый канал</string>
-    <string name="list_of_chats">Cписок чатов</string>
+    <string name="list_of_contacts">Cписок контактов</string>
     <string name="info">Инфо</string>
     <string name="options">Опции</string>
     <string name="change_user_data">Редактировать профиль</string>

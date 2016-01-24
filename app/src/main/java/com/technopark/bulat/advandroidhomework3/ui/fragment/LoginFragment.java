@@ -12,14 +12,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
-import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
-import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AuthResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.UserInfoResponse;
-import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
+import com.technopark.bulat.advandroidhomework3.network.response.welcomeMessage.WelcomeResponse;
+import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 
 import org.json.JSONObject;
 
@@ -28,10 +26,6 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
     private EditText mLoginEditText;
     private EditText mPasswordEditText;
 
-    public LoginFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,11 +33,13 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
 
         mLoginEditText = (EditText) rootView.findViewById(R.id.login_edit_text);
         mPasswordEditText = (EditText) rootView.findViewById(R.id.password_edit_text);
+
         mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
         mLoginEditText.setText(mSharedPreferences.getString("login", ""));
         mPasswordEditText.setText(mSharedPreferences.getString("password", ""));
 
         rootView.findViewById(R.id.login_button).setOnClickListener(this);
+        rootView.findViewById(R.id.register_button).setOnClickListener(this);
         return rootView;
     }
 
@@ -58,7 +54,8 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
                 sharedPreferencesEditor.putString("login", login);
                 sharedPreferencesEditor.putString("password", password);
                 sharedPreferencesEditor.apply();
-                //GlobalSocket.getInstance().performAsyncRequest(new AuthRequest(login, password));
+                SendServiceHelper.getInstance(getActivity()).requestAuth(login, password);
+                break;
             }
             case R.id.register_button: {
                 Fragment registerFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_register);
@@ -69,67 +66,55 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
                         .beginTransaction()
                         .replace(R.id.fragments_container, registerFragment)
                         .commit();
+                break;
             }
         }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        /* Subscribe to socket messages */
-    //    GlobalSocket.getInstance().registerObserver(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        /* Unsubscribe from socket messages */
-     /*   GlobalSocket.getInstance().removeObserver(this);*/
-    }
-
-    @Override
     protected void handleResponse(String action, JSONObject jsonData) {
-
-    }
-
-    public void handleResponseMessage(GeneralResponse rawResponse) {
-        switch (rawResponse.getAction()) {
-            case "auth":
-                final AuthResponse authResponse = new AuthResponse(rawResponse.getJsonData());
+        switch (action) {
+            case "welcome": {
+                new WelcomeResponse(jsonData);
+                break;
+            }
+            case "auth": {
+                AuthResponse authResponse = new AuthResponse(jsonData);
                 int status = authResponse.getStatus();
                 if (status == 0) {
-                    GlobalUserIds.getInstance().cid = authResponse.getCid();
-                    GlobalUserIds.getInstance().sid = authResponse.getSid();
-                  /*  GlobalSocket.getInstance().performAsyncRequest(
-                            new UserInfoRequest(
-                                    GlobalUserIds.getInstance().cid,
-                                    GlobalUserIds.getInstance().cid,
-                                    GlobalUserIds.getInstance().sid
-                            )
-                    );*/
+                    String cid = authResponse.getCid();
+                    String sid = authResponse.getSid();
+                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    editor.putString("cid", cid);
+                    editor.putString("sid", sid);
+                    editor.apply();
+                    // Получить данные для отображения профиля в drawer
+                    SendServiceHelper.getInstance(getActivity()).requestUserInfo(cid, cid, sid);
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getActivity().getBaseContext(), authResponse.getError(), Toast.LENGTH_LONG).show();
-                        }
-                    });
                     switch (status) {
                         case 7:
-                            Fragment registerFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_register);
+                            Fragment registerFragment = getActivity()
+                                    .getSupportFragmentManager()
+                                    .findFragmentById(R.id.fragment_register);
                             if (registerFragment == null) {
                                 registerFragment = new RegisterFragment();
                             }
-                            getActivity().getSupportFragmentManager()
+                            getActivity()
+                                    .getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.fragments_container, registerFragment)
                                     .commit();
                             break;
                         default:
-                            Fragment loginFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_login);
+                            handleErrorFromServer(status);
+                            Fragment loginFragment = getActivity()
+                                    .getSupportFragmentManager()
+                                    .findFragmentById(R.id.fragment_login);
                             if (loginFragment == null) {
                                 loginFragment = new LoginFragment();
                             }
-                            getActivity().getSupportFragmentManager()
+                            getActivity()
+                                    .getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.fragments_container, loginFragment)
                                     .commit();
@@ -137,38 +122,39 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
                     }
                 }
                 break;
-            case "userinfo":
-                final UserInfoResponse userInfoResponse = new UserInfoResponse(rawResponse.getJsonData());
-                if (userInfoResponse.getStatus() == 0) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            String userStatus = userInfoResponse.getUser().getStatus();
-                            //String nickname = userInfoResponse.getUser().getNickname();
-                            SharedPreferences.Editor sharedPreferencesEditor = mSharedPreferences.edit();
-                            sharedPreferencesEditor.putString("status", userStatus);
-                            //sharedPreferencesEditor.putString("nickname", nickname);
-                            sharedPreferencesEditor.apply();
-                            DrawerLayout drawerLayout = ((MainActivity) getActivity()).getDrawerLayout();
-                            //((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
-                            ((TextView) drawerLayout.findViewById(R.id.status)).setText(userStatus);
-                        }
-                    });
-                    Fragment channelListFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_channel_list);
-                    if (channelListFragment == null) {
-                        channelListFragment = new ContactListFragment();
+            }
+            case "userinfo": {
+                UserInfoResponse userInfoResponse = new UserInfoResponse(jsonData);
+                int status = userInfoResponse.getStatus();
+                if (status == 0) {
+
+                    String userStatus = userInfoResponse.getUser().getStatus();
+                    String nickname = userInfoResponse.getUser().getNick();
+
+                    SharedPreferences.Editor sharedPreferencesEditor = mSharedPreferences.edit();
+                    sharedPreferencesEditor.putString("status", userStatus);
+                    sharedPreferencesEditor.putString("nickname", nickname);
+                    sharedPreferencesEditor.apply();
+
+                    DrawerLayout drawerLayout = getMainActivity().getDrawerLayout();
+                    ((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
+                    ((TextView) drawerLayout.findViewById(R.id.status)).setText(userStatus);
+                    Fragment contactListFragment = getActivity()
+                            .getSupportFragmentManager()
+                            .findFragmentById(R.id.fragment_contact_list);
+                    if (contactListFragment == null) {
+                        contactListFragment = new ContactListFragment();
                     }
-                    getActivity().getSupportFragmentManager()
+                    getActivity()
+                            .getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragments_container, channelListFragment)
+                            .replace(R.id.fragments_container, contactListFragment)
                             .commit();
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getActivity().getBaseContext(), userInfoResponse.getError(), Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    handleErrorFromServer(userInfoResponse.getStatus());
                 }
                 break;
+            }
         }
     }
 }

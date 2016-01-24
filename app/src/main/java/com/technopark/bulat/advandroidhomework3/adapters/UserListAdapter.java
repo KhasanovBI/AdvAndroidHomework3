@@ -17,15 +17,15 @@ import java.util.List;
  * Created by bulat on 07.11.15.
  */
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserViewHolder> {
-    private final List<User> channelList;
+    private final List<User> userList;
     private OnItemClickListener onItemClickListener;
 
     public UserListAdapter() {
-        channelList = new ArrayList<>();
+        userList = new ArrayList<>();
     }
 
     public List<User> getUserList() {
-        return channelList;
+        return userList;
     }
 
     @Override
@@ -36,18 +36,18 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        User channel = channelList.get(position);
+        User channel = userList.get(position);
         //holder.mName.setText(String.format("%s (%d)", channel.getName(), channel.getOnlineCount()));
         //holder.mDescription.setText(channel.getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return channelList.size();
+        return userList.size();
     }
 
     public void add(User channel) {
-        channelList.add(channel);
+        userList.add(channel);
         notifyItemInserted(getItemCount());
     }
 

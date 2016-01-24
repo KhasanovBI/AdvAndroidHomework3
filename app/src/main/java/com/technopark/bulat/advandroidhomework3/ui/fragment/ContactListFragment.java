@@ -1,6 +1,8 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -20,9 +22,9 @@ import android.widget.Toast;
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.adapters.UserListAdapter;
 import com.technopark.bulat.advandroidhomework3.models.User;
-import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.ContactListResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.DelContactResponse;
+import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 
 import org.json.JSONObject;
@@ -30,10 +32,6 @@ import org.json.JSONObject;
 public class ContactListFragment extends BaseFragment implements UserListAdapter.OnItemClickListener {
     private UserListAdapter mUserListAdapter;
     private DialogFragment mChannelAddDialogFragment;
-
-    public ContactListFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +45,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
         mChannelAddDialogFragment = new ChannelAddDialogFragment();
         prepareView();
         View rootView = inflater.inflate(R.layout.fragment_channel_list, container, false);
-        RecyclerView mChannelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.channel_list_recycler_view);
+        RecyclerView mChannelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.contact_list_recycler_view);
         mUserListAdapter = new UserListAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
@@ -57,9 +55,13 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
         mChannelListRecyclerView.setLayoutManager(linearLayoutManager);
         mChannelListRecyclerView.setItemAnimator(itemAnimator);
 
-        /* Subscribe to socket messages */
-        // SendServiceHelper.getInstance().registerObserver(this);
-        // SendServiceHelper.getInstance().performAsyncRequest(new ChannelListRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(
+                "auth_settings",
+                Context.MODE_PRIVATE
+        );
+        String cid = sharedPreferences.getString("cid", null);
+        String sid = sharedPreferences.getString("sid", null);
+        SendServiceHelper.getInstance(getActivity()).requestContactList(cid, sid);
 
         return rootView;
     }
@@ -96,34 +98,10 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        //GlobalSocket.getInstance().registerObserver(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        /* Unsubscribe from socket messages */
-        //GlobalSocket.getInstance().removeObserver(this);
-    }
-
-    @Override
     protected void handleResponse(String action, JSONObject jsonData) {
-
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_channel_list, menu);
-    }
-
-    public void handleResponseMessage(GeneralResponse rawResponse) {
-        String action = rawResponse.getAction();
         switch (action) {
             case "channellist":
-                final ContactListResponse channelListResponse = new ContactListResponse(rawResponse.getJsonData());
+                final ContactListResponse channelListResponse = new ContactListResponse(jsonData);
                 int status = channelListResponse.getStatus();
                 if (status == 0) {
                     getActivity().runOnUiThread(new Runnable() {
@@ -142,7 +120,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                 }
                 break;
             case "createchannel":
-                final DelContactResponse createChannelResponse = new DelContactResponse(rawResponse.getJsonData());
+                final DelContactResponse createChannelResponse = new DelContactResponse(jsonData);
                 if (createChannelResponse.getStatus() == 0) {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
@@ -160,13 +138,19 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_channel_list, menu);
+    }
+
     private void prepareView() {
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.unsetFullScreenFlag();
         ActionBar actionBar = mainActivity.getSupportActionBar();
         assert actionBar != null;
         actionBar.show();
-        actionBar.setTitle(R.string.list_of_chats);
+        actionBar.setTitle(R.string.list_of_contacts);
         actionBar.setIcon(R.drawable.ic_chat_white_24dp);
         mainActivity.getDrawerToggle().syncState();
     }

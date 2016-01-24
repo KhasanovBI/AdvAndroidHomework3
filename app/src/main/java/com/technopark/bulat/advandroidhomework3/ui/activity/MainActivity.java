@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_channel_list:
-                Fragment channelListFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_channel_list);
+                Fragment channelListFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_contact_list);
                 if (channelListFragment == null) {
                     channelListFragment = new ContactListFragment();
                 }

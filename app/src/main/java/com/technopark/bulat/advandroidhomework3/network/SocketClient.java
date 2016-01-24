@@ -39,6 +39,7 @@ public class SocketClient implements SocketParams {
     }
 
     public void runResponseGetter() {
+        Log.d(LOG_TAG, "runResponseGetter");
         isNeedRun = true;
         Thread responseGetter = new Thread(new Runnable() {
             @Override
@@ -58,6 +59,7 @@ public class SocketClient implements SocketParams {
     }
 
     public void stopResponseGetter() {
+        Log.d(LOG_TAG, "stopResponseGetter");
         isNeedRun = false;
     }
 
@@ -104,7 +106,7 @@ public class SocketClient implements SocketParams {
         return false;
     }
 
-    private boolean checkConnection() {
+    synchronized private boolean checkConnection() {
         return socket != null && socket.isConnected() || connect();
     }
 

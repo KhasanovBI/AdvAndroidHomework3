@@ -1,7 +1,14 @@
 package com.technopark.bulat.advandroidhomework3.service;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 
@@ -23,10 +30,9 @@ import com.technopark.bulat.advandroidhomework3.network.request.messages.UserInf
 
 import java.util.List;
 
-public class SendService extends IntentService {
+public class SendService extends Service {
     private static final String LOG_TAG = "MyService";
     public static final String REQUEST_TYPE_EXTRA = "REQUEST_TYPE_EXTRA";
-    public static final String SERVICE_CALLBACK_EXTRA = "SERVICE_CALLBACK_EXTRA";
 
     public static final String REGISTER_LOGIN_EXTRA = "REGISTER_LOGIN_EXTRA";
     public static final String REGISTER_PASS_EXTRA = "REGISTER_PASS_EXTRA";
@@ -35,55 +41,54 @@ public class SendService extends IntentService {
     public static final String AUTH_LOGIN_EXTRA = "AUTH_LOGIN_EXTRA";
     public static final String AUTH_PASS_EXTRA = "AUTH_PASS_EXTRA";
 
-    private static final String USER_INFO_USER_ID_EXTRA = "USER_INFO_USER_ID_EXTRA";
+    public static final String USER_INFO_USER_ID_EXTRA = "USER_INFO_USER_ID_EXTRA";
+    public static final String USER_INFO_SID_EXTRA = "USER_INFO_SID_EXTRA";
+    public static final String USER_INFO_CID_EXTRA = "USER_INFO_CID_EXTRA";
 
-    private static final String USER_INFO_SID_EXTRA = "USER_INFO_SID_EXTRA";
-    private static final String USER_INFO_CID_EXTRA = "USER_INFO_CID_EXTRA";
+    public static final String SET_USER_INFO_CID_EXTRA = "SET_USER_INFO_CID_EXTRA";
+    public static final String SET_USER_INFO_SID_EXTRA = "SET_USER_INFO_SID_EXTRA";
+    public static final String SET_USER_INFO_USER_EXTRA = "SET_USER_INFO_USER_EXTRA";
 
-    private static final String SET_USER_INFO_CID_EXTRA = "SET_USER_INFO_CID_EXTRA";
-    private static final String SET_USER_INFO_SID_EXTRA = "SET_USER_INFO_SID_EXTRA";
-    private static final String SET_USER_INFO_USER_EXTRA = "SET_USER_INFO_USER_EXTRA";
+    public static final String ADD_CONTACT_CID_EXTRA = "ADD_CONTACT_CID_EXTRA";
+    public static final String ADD_CONTACT_SID_EXTRA = "ADD_CONTACT_SID_EXTRA";
+    public static final String ADD_CONTACT_USER_ID_EXTRA = "ADD_CONTACT_USER_ID_EXTRA";
 
-    private static final String ADD_CONTACT_CID_EXTRA = "ADD_CONTACT_CID_EXTRA";
-    private static final String ADD_CONTACT_SID_EXTRA = "ADD_CONTACT_SID_EXTRA";
-    private static final String ADD_CONTACT_USER_ID_EXTRA = "ADD_CONTACT_USER_ID_EXTRA";
+    public static final String DEL_CONTACT_CID_EXTRA = "DEL_CONTACT_CID_EXTRA";
+    public static final String DEL_CONTACT_SID_EXTRA = "DEL_CONTACT_SID_EXTRA";
+    public static final String DEL_CONTACT_USER_ID_EXTRA = "DEL_CONTACT_USER_ID_EXTRA";
 
-    private static final String DEL_CONTACT_CID_EXTRA = "DEL_CONTACT_CID_EXTRA";
-    private static final String DEL_CONTACT_SID_EXTRA = "DEL_CONTACT_SID_EXTRA";
-    private static final String DEL_CONTACT_USER_ID_EXTRA = "DEL_CONTACT_USER_ID_EXTRA";
+    public static final String CONTACT_LIST_CID_EXTRA = "CONTACT_LIST_CID_EXTRA";
+    public static final String CONTACT_LIST_SID_EXTRA = "CONTACT_LIST_SID_EXTRA";
 
-    private static final String CONTACT_LIST_CID_EXTRA = "CONTACT_LIST_CID_EXTRA";
-    private static final String CONTACT_LIST_SID_EXTRA = "CONTACT_LIST_SID_EXTRA";
-
-    private static final String IMPORT_CONTACTS_EXTRA = "IMPORT_CONTACTS_EXTRA";
+    public static final String IMPORT_CONTACTS_EXTRA = "IMPORT_CONTACTS_EXTRA";
 
     public static final String ORIGINAL_INTENT_EXTRA = "ORIGINAL_INTENT_EXTRA";
 
-    private static final String MESSAGE_CID_EXTRA = "MESSAGE_CID_EXTRA";
-    private static final String MESSAGE_SID_EXTRA = "MESSAGE_SID_EXTRA";
-    private static final String MESSAGE_USER_ID_EXTRA = "MESSAGE_USER_ID_EXTRA";
-    private static final String MESSAGE_BODY_EXTRA = "MESSAGE_BODY_EXTRA";
-    private static final String MESSAGE_ATTACH_EXTRA = "MESSAGE_ATTACH_EXTRA";
+    public static final String MESSAGE_CID_EXTRA = "MESSAGE_CID_EXTRA";
+    public static final String MESSAGE_SID_EXTRA = "MESSAGE_SID_EXTRA";
+    public static final String MESSAGE_USER_ID_EXTRA = "MESSAGE_USER_ID_EXTRA";
+    public static final String MESSAGE_BODY_EXTRA = "MESSAGE_BODY_EXTRA";
+    public static final String MESSAGE_ATTACH_EXTRA = "MESSAGE_ATTACH_EXTRA";
 
     public static final String BROADCAST_ACTION = "com.technopark.bulat.advandroidhomework3.BROADCAST_ACTION";
 
     public static final String SOCKET_RESPONSE_MESSAGE_EXTRA = "SOCKET_RESPONSE_MESSAGE_EXTRA";
 
     private static SocketClient socketClient;
+
     private Intent mOriginalRequestIntent;
-    private ResultReceiver mServiceCallback;
+
+    private volatile Looper mServiceLooper;
+    private volatile ServiceHandler mServiceHandler;
 
     public SendService() {
-        super("SendService");
         socketClient = new SocketClient(makeSocketCallback());
     }
 
-    @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(LOG_TAG, "Handle intent");
         mOriginalRequestIntent = intent;
         RequestType requestType = (RequestType) mOriginalRequestIntent.getSerializableExtra(REQUEST_TYPE_EXTRA);
-        mServiceCallback = mOriginalRequestIntent.getParcelableExtra(SERVICE_CALLBACK_EXTRA);
         RequestMessage requestMessage = null;
         switch (requestType) {
             case REGISTER: {
@@ -100,10 +105,10 @@ public class SendService extends IntentService {
                 break;
             }
             case USER_INFO: {
+                String userId = mOriginalRequestIntent.getStringExtra(USER_INFO_USER_ID_EXTRA);
                 String cid = mOriginalRequestIntent.getStringExtra(USER_INFO_CID_EXTRA);
                 String sid = mOriginalRequestIntent.getStringExtra(USER_INFO_SID_EXTRA);
-                String userId = mOriginalRequestIntent.getStringExtra(USER_INFO_USER_ID_EXTRA);
-                requestMessage = new UserInfoRequest(cid, sid, userId);
+                requestMessage = new UserInfoRequest(userId, cid, sid);
                 break;
             }
             case SET_USER_INFO: {
@@ -163,9 +168,46 @@ public class SendService extends IntentService {
         };
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            onHandleIntent((Intent) msg.obj);
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        HandlerThread thread = new HandlerThread("IntentService[SendService]");
+        thread.start();
+
+        mServiceLooper = thread.getLooper();
+        mServiceHandler = new ServiceHandler(mServiceLooper);
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Message msg = mServiceHandler.obtainMessage();
+        msg.arg1 = startId;
+        msg.obj = intent;
+        mServiceHandler.sendMessage(msg);
+        return START_NOT_STICKY;
+    }
+
     @Override
     public void onDestroy() {
         socketClient.stopResponseGetter();
-        super.onDestroy();
+        mServiceLooper.quit();
     }
 }

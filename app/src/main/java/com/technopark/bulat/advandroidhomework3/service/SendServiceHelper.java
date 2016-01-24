@@ -16,13 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SendServiceHelper {
     private static final String LOG_TAG = "MyServiceHelper";
-    public static String ACTION_REQUEST_RESULT = "REQUEST_RESULT";
-    public static String EXTRA_REQUEST_ID = "EXTRA_REQUEST_ID";
-    public static String EXTRA_RESULT_CODE = "EXTRA_RESULT_CODE";
-
-    private static final String REQUEST_ID = "REQUEST_ID";
-    private AtomicInteger requestCounter = new AtomicInteger(0);
-    private final Map<RequestType, Integer> pendingRequests = new HashMap<>();
     private WeakReference<Context> weakContext;
     public static volatile SendServiceHelper sendServiceHelperInstance;
 
@@ -43,57 +36,48 @@ public class SendServiceHelper {
         weakContext = new WeakReference<>(context.getApplicationContext());
     }
 
-    public boolean isRequestPending(RequestType requestType) {
-        return pendingRequests.containsKey(requestType);
-    }
-
-    private int generateRequestId() {
-        return requestCounter.getAndIncrement();
-    }
-
-    private void handleResponse(int resultCode, Bundle resultData) {
-        Log.d(LOG_TAG, "handleResponse");
-        Intent originalIntent = resultData.getParcelable(SendService.ORIGINAL_INTENT_EXTRA);
-        if (originalIntent != null) {
-            int requestId = originalIntent.getIntExtra(REQUEST_ID, -1);
-            Log.d(LOG_TAG, "Remove request from map");
-            pendingRequests.values().remove(requestId);
-
-            Intent broadcastIntent = new Intent(ACTION_REQUEST_RESULT);
-            broadcastIntent.putExtra(EXTRA_REQUEST_ID, requestId);
-            broadcastIntent.putExtra(EXTRA_RESULT_CODE, resultCode);
-            weakContext.get().sendBroadcast(broadcastIntent);
-        }
-    }
-
-    private Intent prepareIntent(Context context, int requestId, RequestType requestType) {
-        Log.d(LOG_TAG, "prepare intent");
-        ResultReceiver serviceCallback = new ResultReceiver(null) {
-            @Override
-            protected void onReceiveResult(int resultCode, Bundle resultData) {
-                handleResponse(resultCode, resultData);
-            }
-        };
+    private Intent prepareIntent(Context context, RequestType requestType) {
+        Log.d(LOG_TAG, "Prepare intent");
         Intent intent = new Intent(context, SendService.class);
-        intent.putExtra(REQUEST_ID, requestId);
         intent.putExtra(SendService.REQUEST_TYPE_EXTRA, requestType);
-        intent.putExtra(SendService.SERVICE_CALLBACK_EXTRA, serviceCallback);
         return intent;
     }
 
-    public int requestAuth(String login, String pass) {
+    public void requestAuth(String login, String pass) {
         RequestType requestType = RequestType.AUTH;
-        if (isRequestPending(requestType)) {
-            return pendingRequests.get(requestType);
-        }
-        int requestId = generateRequestId();
-        pendingRequests.put(requestType, requestId);
-
         Context context = weakContext.get();
-        Intent intent = prepareIntent(context, requestId, requestType);
+        Intent intent = prepareIntent(context, requestType);
         intent.putExtra(SendService.AUTH_LOGIN_EXTRA, login);
         intent.putExtra(SendService.AUTH_PASS_EXTRA, pass);
         context.startService(intent);
-        return requestId;
+    }
+
+    public void requestUserInfo(String uid, String cid, String sid) {
+        RequestType requestType = RequestType.USER_INFO;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putExtra(SendService.USER_INFO_USER_ID_EXTRA, uid);
+        intent.putExtra(SendService.USER_INFO_CID_EXTRA, cid);
+        intent.putExtra(SendService.USER_INFO_SID_EXTRA, sid);
+        context.startService(intent);
+    }
+
+    public void requestRegister(String login, String pass, String nick) {
+        RequestType requestType = RequestType.REGISTER;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putExtra(SendService.REGISTER_LOGIN_EXTRA, login);
+        intent.putExtra(SendService.REGISTER_PASS_EXTRA, pass);
+        intent.putExtra(SendService.REGISTER_NICK_EXTRA, nick);
+        context.startService(intent);
+    }
+
+    public void requestContactList(String cid, String sid) {
+        RequestType requestType = RequestType.CONTACT_LIST;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putExtra(SendService.CONTACT_LIST_CID_EXTRA, cid);
+        intent.putExtra(SendService.CONTACT_LIST_SID_EXTRA, sid);
+        context.startService(intent);
     }
 }
