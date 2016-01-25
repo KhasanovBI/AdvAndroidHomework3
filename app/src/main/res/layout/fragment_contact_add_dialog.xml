@@ -5,20 +5,11 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/channel_name"
+        android:id="@+id/contact_uid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="@dimen/dialog_padding"
         android:layout_marginRight="@dimen/dialog_padding"
-        android:hint="@string/channel_name" />
-
-    <EditText
-        android:id="@+id/channel_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="@dimen/dialog_padding"
-        android:layout_marginRight="@dimen/dialog_padding"
-        android:hint="@string/channel_description" />
+        android:hint="@string/contact_uid" />
 </LinearLayout>

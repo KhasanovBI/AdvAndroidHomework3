@@ -2,8 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/add_channel_button"
-        android:icon="@drawable/ic_add_white_24dp"
-        android:title="@string/add_channel"
-        app:showAsAction="always" />
+        android:id="@+id/add_person_button"
+        android:icon="@drawable/ic_person_add_white_24dp"
+        android:title="@string/add_contact"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/import_group_button"
+        android:icon="@drawable/ic_group_add_white_24dp"
+        android:title="@string/add_contact"
+        app:showAsAction="ifRoom" />
 </menu>

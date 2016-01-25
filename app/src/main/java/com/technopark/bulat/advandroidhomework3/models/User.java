@@ -7,9 +7,9 @@ import android.os.Parcelable;
  * Created by bulat on 08.11.15.
  */
 public class User implements Parcelable {
+    private String myid;
     private String uid;
     private String login;
-    private String pass;
     private String nick;
     private String status;
     private String email;
@@ -17,6 +17,14 @@ public class User implements Parcelable {
     private String picture;
 
     public User() {
+    }
+
+    public String getMyid() {
+        return myid;
+    }
+
+    public void setMyid(String myid) {
+        this.myid = myid;
     }
 
     public String getUid() {
@@ -33,14 +41,6 @@ public class User implements Parcelable {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
     }
 
     public String getNick() {
@@ -84,9 +84,9 @@ public class User implements Parcelable {
     }
 
     protected User(Parcel in) {
+        myid = in.readString();
         uid = in.readString();
         login = in.readString();
-        pass = in.readString();
         nick = in.readString();
         status = in.readString();
         email = in.readString();
@@ -106,7 +106,6 @@ public class User implements Parcelable {
         }
     };
 
-
     @Override
     public int describeContents() {
         return this.hashCode();
@@ -114,9 +113,9 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(myid);
         dest.writeString(uid);
         dest.writeString(login);
-        dest.writeString(pass);
         dest.writeString(nick);
         dest.writeString(status);
         dest.writeString(email);

@@ -11,7 +11,8 @@
     <string name="do_register">Зарегистрироваться</string>
 
     <string name="nickname">Ник</string>
-    <string name="add_channel">Создать чат</string>
+    <string name="add_contact">Добавить контакт</string>
+    <string name="new_contact">Новый контакт</string>
     <string name="settings">Настройки</string>
     <string name="current_user">Вы</string>
     <string name="status">Статус</string>
@@ -19,9 +20,7 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
-    <string name="channel_name">Имя канала</string>
-    <string name="channel_description">Короткое описание</string>
-    <string name="new_channel">Новый канал</string>
+    <string name="contact_uid">UID пользователя</string>
     <string name="list_of_contacts">Cписок контактов</string>
     <string name="info">Инфо</string>
     <string name="options">Опции</string>
@@ -31,6 +30,9 @@
     <string name="navigation_drawer_close">Закрыть navigation drawer</string>
     <string name="save">Сохранить</string>
     <string name="changes_saved">Изменения сохранены</string>
+    <string name="sorry_permission_denied">Sorry, permission denied…</string>
+    <string name="contact_successfully_added">Contact successfully added.</string>
+    <string name="successfully_import_contacts">Successfully import %d contacts</string>
 
     <string-array name="errors">
         <item>All OK</item>

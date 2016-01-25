@@ -3,11 +3,16 @@ package com.technopark.bulat.advandroidhomework3.service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 
+import com.technopark.bulat.advandroidhomework3.models.User;
+
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -78,6 +83,24 @@ public class SendServiceHelper {
         Intent intent = prepareIntent(context, requestType);
         intent.putExtra(SendService.CONTACT_LIST_CID_EXTRA, cid);
         intent.putExtra(SendService.CONTACT_LIST_SID_EXTRA, sid);
+        context.startService(intent);
+    }
+
+    public void requestImport(ArrayList<User> users) {
+        RequestType requestType = RequestType.IMPORT;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putParcelableArrayListExtra(SendService.IMPORT_CONTACTS_EXTRA, users);
+        context.startService(intent);
+    }
+
+    public void requestAddContact(String uid, String cid, String sid) {
+        RequestType requestType = RequestType.ADD_CONTACT;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putExtra(SendService.ADD_CONTACT_USER_ID_EXTRA, uid);
+        intent.putExtra(SendService.ADD_CONTACT_CID_EXTRA, cid);
+        intent.putExtra(SendService.ADD_CONTACT_SID_EXTRA, sid);
         context.startService(intent);
     }
 }

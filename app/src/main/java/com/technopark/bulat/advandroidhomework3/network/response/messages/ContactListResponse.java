@@ -29,12 +29,11 @@ public class ContactListResponse extends ResponseMessage {
                 for (int i = 0; i < jsonUsers.length(); ++i) {
                     JSONObject jsonUser = (JSONObject) jsonUsers.get(i);
                     User user = new User();
-                    // не стал парсить myid
                     user.setUid(jsonUser.getString("uid"));
                     user.setNick(jsonUser.getString("nick"));
                     user.setEmail(jsonUser.getString("email"));
-                    user.setPhone(jsonData.getString("phone"));
-                    user.setPicture(jsonData.getString("picture"));
+                    user.setPhone(jsonUser.getString("phone"));
+                    user.setPicture(jsonUser.getString("picture"));
                     users.add(user);
                 }
             } catch (JSONException e) {

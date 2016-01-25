@@ -70,7 +70,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
         public UserViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            mName = (TextView) itemView.findViewById(R.id.channel_name);
+            mName = (TextView) itemView.findViewById(R.id.contact_uid);
             mDescription = (TextView) itemView.findViewById(R.id.channel_description);
         }
 

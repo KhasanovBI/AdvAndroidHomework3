@@ -1,8 +1,10 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -11,20 +13,22 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.technopark.bulat.advandroidhomework3.R;
+import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 
-public class ChannelAddDialogFragment extends DialogFragment implements OnClickListener {
-    private EditText mChannelNameEditText;
-    private EditText mChannelDescriptionEditText;
+public class AddContactDialogFragment extends DialogFragment implements OnClickListener {
+    private EditText mUIDEditText;
+    private SharedPreferences mSharedPreferences;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_channel_add_dialog, null);
-        mChannelNameEditText = (EditText) view.findViewById(R.id.channel_name);
-        mChannelDescriptionEditText = (EditText) view.findViewById(R.id.channel_description);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_contact_add_dialog, null);
+
+        mUIDEditText = (EditText) view.findViewById(R.id.contact_uid);
+        mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
 
         Builder alertDialogBuilder = new Builder(getActivity())
-                .setTitle(R.string.new_channel)
+                .setTitle(R.string.new_contact)
                 .setPositiveButton(R.string.ok, this)
                 .setNegativeButton(R.string.cancel, this)
                 .setView(view);
@@ -35,10 +39,11 @@ public class ChannelAddDialogFragment extends DialogFragment implements OnClickL
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
-                String name = mChannelNameEditText.getText().toString();
-                if (name.length() != 0) {
-                    String description = mChannelDescriptionEditText.getText().toString();
-                    //GlobalSocket.getInstance().performAsyncRequest(new CreateChannelRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid, name, description));
+                String uid = mUIDEditText.getText().toString();
+                if (uid.length() != 0) {
+                    String cid = mSharedPreferences.getString("cid", null);
+                    String sid = mSharedPreferences.getString("sid", null);
+                    SendServiceHelper.getInstance(getActivity()).requestAddContact(uid, cid, sid);
                 }
                 break;
         }

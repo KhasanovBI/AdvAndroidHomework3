@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.technopark.bulat.advandroidhomework3.R;
-import com.technopark.bulat.advandroidhomework3.models.GlobalUserIds;
 import com.technopark.bulat.advandroidhomework3.models.Message;
 
 import java.util.ArrayList;
@@ -55,10 +54,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (messages.get(position).getUserId().equals(GlobalUserIds.getInstance().cid)) {
-            return CURRENT_USER;
-        } else
-            return ANOTHER_USER;
+//        if (messages.get(position).getUserId().equals(GlobalUserIds.getInstance().cid)) {
+//            return CURRENT_USER;
+//        } else
+//            return ANOTHER_USER;
+        return 0;
     }
 
     public OnItemClickListener getOnItemClickListener() {

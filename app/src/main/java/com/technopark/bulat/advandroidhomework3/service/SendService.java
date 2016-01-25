@@ -1,6 +1,5 @@
 package com.technopark.bulat.advandroidhomework3.service;
 
-import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
@@ -9,7 +8,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 
 import com.technopark.bulat.advandroidhomework3.models.Attach;
@@ -62,7 +60,6 @@ public class SendService extends Service {
 
     public static final String IMPORT_CONTACTS_EXTRA = "IMPORT_CONTACTS_EXTRA";
 
-    public static final String ORIGINAL_INTENT_EXTRA = "ORIGINAL_INTENT_EXTRA";
 
     public static final String MESSAGE_CID_EXTRA = "MESSAGE_CID_EXTRA";
     public static final String MESSAGE_SID_EXTRA = "MESSAGE_SID_EXTRA";

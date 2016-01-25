@@ -26,7 +26,7 @@ public class ImportRequest implements RequestMessage {
             JSONArray jsonContactsArray = new JSONArray();
             for (User contact : contacts) {
                 JSONObject jsonContact = new JSONObject();
-                jsonContact.put("myid", contact.getUid());
+                jsonContact.put("myid", contact.getMyid());
                 jsonContact.put("name", contact.getNick());
                 jsonContact.put("phone", contact.getPhone());
                 jsonContact.put("email", contact.getEmail());
