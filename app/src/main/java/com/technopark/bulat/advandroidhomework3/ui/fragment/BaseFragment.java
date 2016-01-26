@@ -64,7 +64,10 @@ public abstract class BaseFragment extends Fragment {
                 if (connectionErrorCode != -1) {
                     handleConnectionError(connectionErrorCode);
                 } else {
-                    GeneralResponse generalResponse = new GeneralResponse(socketResponseMessage.getStringResponse());
+                    GeneralResponse generalResponse = new GeneralResponse(
+                            socketResponseMessage.getAction(),
+                            socketResponseMessage.getStringResponse()
+                    );
                     handleResponse(generalResponse.getAction(), generalResponse.getJsonData());
                 }
             }

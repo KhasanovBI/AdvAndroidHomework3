@@ -1,16 +1,20 @@
 package com.technopark.bulat.advandroidhomework3.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.models.Attach;
+import com.technopark.bulat.advandroidhomework3.models.Message;
 import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.network.SocketCallback;
 import com.technopark.bulat.advandroidhomework3.network.SocketClient;
@@ -25,6 +29,10 @@ import com.technopark.bulat.advandroidhomework3.network.request.messages.Message
 import com.technopark.bulat.advandroidhomework3.network.request.messages.RegisterRequest;
 import com.technopark.bulat.advandroidhomework3.network.request.messages.SetUserInfoRequest;
 import com.technopark.bulat.advandroidhomework3.network.request.messages.UserInfoRequest;
+import com.technopark.bulat.advandroidhomework3.network.response.events.MessageEventResponse;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -164,8 +172,34 @@ public class SendService extends Service {
                 Intent intent = new Intent(BROADCAST_ACTION);
                 intent.putExtra(SOCKET_RESPONSE_MESSAGE_EXTRA, socketResponseMessage);
                 sendBroadcast(intent);
+                if (socketResponseMessage.getConnectionError() == -1 && socketResponseMessage.getAction().equals("ev_message")) {
+                    showNotification(socketResponseMessage.getStringResponse());
+                }
             }
         };
+    }
+
+    private void showNotification(String stringResponse) {
+        try {
+            MessageEventResponse messageEventResponse = new MessageEventResponse(new JSONObject(stringResponse).getJSONObject("data"));
+            Message message = messageEventResponse.getMessage();
+            Notification.Builder builder = new Notification.Builder(this);
+            builder.setContentTitle(message.getUserNick());
+            builder.setContentText(message.getText());
+            builder.setSmallIcon(R.drawable.ic_cloud_queue_indigo_a200_48dp);
+            Notification notification;
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                notification = builder.build();
+            } else {
+                notification = builder.getNotification();
+            }
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(123, notification);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -180,7 +214,7 @@ public class SendService extends Service {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(android.os.Message msg) {
             onHandleIntent((Intent) msg.obj);
         }
     }
@@ -198,7 +232,7 @@ public class SendService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Message msg = mServiceHandler.obtainMessage();
+        android.os.Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = startId;
         msg.obj = intent;
         mServiceHandler.sendMessage(msg);

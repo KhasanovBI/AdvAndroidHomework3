@@ -1,5 +1,6 @@
 package com.technopark.bulat.advandroidhomework3.network;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
  */
 public class SocketResponseMessage implements Serializable {
     private int connectionError = -1;
+    private String action;
     private String stringResponse;
 
     public SocketResponseMessage(int connectionError) {
@@ -17,6 +19,12 @@ public class SocketResponseMessage implements Serializable {
 
     public SocketResponseMessage(String stringResponse) {
         this.stringResponse = stringResponse;
+        try {
+            JSONObject jsonResponse = new JSONObject(stringResponse);
+            action = jsonResponse.getString("action");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getConnectionError() {
@@ -25,5 +33,13 @@ public class SocketResponseMessage implements Serializable {
 
     public String getStringResponse() {
         return stringResponse;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }

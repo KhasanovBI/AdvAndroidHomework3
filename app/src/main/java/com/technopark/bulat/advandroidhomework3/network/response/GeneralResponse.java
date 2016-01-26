@@ -1,6 +1,5 @@
 package com.technopark.bulat.advandroidhomework3.network.response;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,10 +11,10 @@ public class GeneralResponse {
     private String action;
     private JSONObject jsonData;
 
-    public GeneralResponse(String stringResponse) {
+    public GeneralResponse(String action, String stringResponse) {
+        this.action = action;
         try {
             JSONObject jsonResponse = new JSONObject(stringResponse);
-            action = jsonResponse.getString("action");
             if (action.equals("welcome")) {
                 jsonData = jsonResponse;
             } else {
