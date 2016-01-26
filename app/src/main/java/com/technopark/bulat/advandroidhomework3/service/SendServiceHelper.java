@@ -120,4 +120,14 @@ public class SendServiceHelper {
         intent.putExtra(SendService.SET_USER_INFO_USER_EXTRA, user);
         context.startService(intent);
     }
+
+    public void requestDelContact(String uid, String cid, String sid) {
+        RequestType requestType = RequestType.DEL_CONTACT;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putExtra(SendService.DEL_CONTACT_USER_ID_EXTRA, uid);
+        intent.putExtra(SendService.DEL_CONTACT_CID_EXTRA, cid);
+        intent.putExtra(SendService.DEL_CONTACT_SID_EXTRA, sid);
+        context.startService(intent);
+    }
 }

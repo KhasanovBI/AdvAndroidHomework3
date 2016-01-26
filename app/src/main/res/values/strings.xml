@@ -36,6 +36,7 @@
     <string name="phone">Телефон</string>
     <string name="email">Email</string>
     <string name="choose_image">Выберите изображение</string>
+    <string name="you_have_no_contacts">You have no contacts…</string>
 
     <string-array name="errors">
         <item>All OK</item>

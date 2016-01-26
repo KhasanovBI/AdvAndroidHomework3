@@ -7,6 +7,7 @@ import android.os.Parcelable;
  * Created by bulat on 08.11.15.
  */
 public class User implements Parcelable {
+    public static String descriptionKey = "USER_DESCRIPTION_KEY";
     private String myid;
     private String uid;
     private String login;

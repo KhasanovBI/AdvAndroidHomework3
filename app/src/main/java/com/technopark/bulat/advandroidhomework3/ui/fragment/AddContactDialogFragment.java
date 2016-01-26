@@ -24,7 +24,7 @@ public class AddContactDialogFragment extends DialogFragment implements OnClickL
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_contact_add_dialog, null);
 
-        mUIDEditText = (EditText) view.findViewById(R.id.contact_uid);
+        mUIDEditText = (EditText) view.findViewById(R.id.contact_name);
         mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
 
         Builder alertDialogBuilder = new Builder(getActivity())

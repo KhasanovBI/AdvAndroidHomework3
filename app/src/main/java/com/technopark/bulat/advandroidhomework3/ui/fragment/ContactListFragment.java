@@ -29,6 +29,7 @@ import com.technopark.bulat.advandroidhomework3.adapters.UserListAdapter;
 import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AddContactResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.ContactListResponse;
+import com.technopark.bulat.advandroidhomework3.network.response.messages.DelContactResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.ImportResponse;
 import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
@@ -54,7 +55,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
 
         mAddContactDialogFragment = new AddContactDialogFragment();
         prepareView();
-        View rootView = inflater.inflate(R.layout.fragment_channel_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_contact_list, container, false);
         RecyclerView mChannelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.contact_list_recycler_view);
         mUserListAdapter = new UserListAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -65,38 +66,64 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
         mChannelListRecyclerView.setLayoutManager(linearLayoutManager);
         mChannelListRecyclerView.setItemAnimator(itemAnimator);
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(
+        mSharedPreferences = getActivity().getSharedPreferences(
                 "auth_settings",
                 Context.MODE_PRIVATE
         );
-        String cid = sharedPreferences.getString("cid", null);
-        String sid = sharedPreferences.getString("sid", null);
+        String cid = mSharedPreferences.getString("cid", null);
+        String sid = mSharedPreferences.getString("sid", null);
         SendServiceHelper.getInstance(getActivity()).requestContactList(cid, sid);
 
         return rootView;
     }
 
     @Override
-    public void onItemClick(UserListAdapter.UserViewHolder item, int position) {
-        //TODO
-        User channel = mUserListAdapter.getUserList().get(position);
-        Fragment chatFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_chat);
-        if (chatFragment == null) {
-            chatFragment = new ChatFragment();
-            Bundle bundle = new Bundle();
-            // bundle.putSerializable(Channel.descriptionKey, channel);
-            chatFragment.setArguments(bundle);
+    public void onItemClick(int position, int itemViewId) {
+        switch (itemViewId) {
+            case R.id.trash_button:
+                String uid = mUserListAdapter.getItem(position).getUid();
+                String cid = mSharedPreferences.getString("cid", null);
+                String sid = mSharedPreferences.getString("sid", null);
+                SendServiceHelper.getInstance(getActivity()).requestDelContact(uid, cid, sid);
+                break;
+            case R.id.contact_avatar: {
+                Fragment contactInfoFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_contact_info);
+                User user = mUserListAdapter.getUserList().get(position);
+                if (contactInfoFragment == null) {
+                    contactInfoFragment = new ContactInfoFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(User.descriptionKey, user);
+                    contactInfoFragment.setArguments(bundle);
+                }
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.fragments_container, contactInfoFragment).commit();
+                break;
+            }
+            default: {
+                User user = mUserListAdapter.getUserList().get(position);
+                Fragment chatFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_chat);
+                if (chatFragment == null) {
+                    chatFragment = new ChatFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(User.descriptionKey, user);
+                    chatFragment.setArguments(bundle);
+                }
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.fragments_container, chatFragment).commit();
+            }
         }
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.fragments_container, chatFragment).commit();
     }
 
     private void importContacts() {
         ArrayList<User> users = getContacts();
         if (users.size() > 0) {
             SendServiceHelper.getInstance(getActivity()).requestImport(users);
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), R.string.you_have_no_contacts, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -128,9 +155,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                 ContactListResponse contactListResponse = new ContactListResponse(jsonData);
                 int status = contactListResponse.getStatus();
                 if (status == 0) {
-                    for (User channel : contactListResponse.getUsers()) {
-                        mUserListAdapter.add(channel);
-                    }
+                    mUserListAdapter.changeUserList(contactListResponse.getUsers());
                 } else {
                     handleErrorFromServer(contactListResponse.getStatus());
                 }
@@ -158,13 +183,24 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                 int status = addContactResponse.getStatus();
                 if (status == 0) {
                     Toast.makeText(getActivity().getApplicationContext(), R.string.contact_successfully_added, Toast.LENGTH_LONG).show();
+                    String cid = mSharedPreferences.getString("cid", null);
+                    String sid = mSharedPreferences.getString("sid", null);
+                    SendServiceHelper.getInstance(getActivity()).requestContactList(cid, sid);
                 } else {
                     handleErrorFromServer(status);
                 }
                 break;
             }
             case "delcontact": {
-                //TODO
+                final DelContactResponse delContactResponse = new DelContactResponse(jsonData);
+                int status = delContactResponse.getStatus();
+                if (status == 0) {
+                    String cid = mSharedPreferences.getString("cid", null);
+                    String sid = mSharedPreferences.getString("sid", null);
+                    SendServiceHelper.getInstance(getActivity()).requestContactList(cid, sid);
+                } else {
+                    handleErrorFromServer(status);
+                }
                 break;
             }
             default:
