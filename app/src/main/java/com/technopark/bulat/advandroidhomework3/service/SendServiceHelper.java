@@ -103,4 +103,21 @@ public class SendServiceHelper {
         intent.putExtra(SendService.ADD_CONTACT_SID_EXTRA, sid);
         context.startService(intent);
     }
+
+    public void requestConnect() {
+        RequestType requestType = RequestType.CONNECT;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        context.startService(intent);
+    }
+
+    public void requestSetUserInfo(String cid, String sid, User user) {
+        RequestType requestType = RequestType.SET_USER_INFO;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putExtra(SendService.SET_USER_INFO_CID_EXTRA, cid);
+        intent.putExtra(SendService.SET_USER_INFO_SID_EXTRA, sid);
+        intent.putExtra(SendService.SET_USER_INFO_USER_EXTRA, user);
+        context.startService(intent);
+    }
 }

@@ -102,6 +102,7 @@ public class SocketClient implements SocketParams {
             connectionErrorCode = 3;
             e.printStackTrace();
         }
+        threadSleep(CONNECTION_ERROR_SLEEP_TIME);
         socketCallback.send(new SocketResponseMessage(connectionErrorCode));
         return false;
     }
@@ -160,18 +161,27 @@ public class SocketClient implements SocketParams {
         List<String> stringResponses = null;
         if (socketOutputString != null && socketOutputString.length() > 0) {
             stringResponses = new ArrayList<>();
-            try {
-                do {
-                    /* Из socket может быть прочитано более 1 строки. */
-                    JSONObject splitResponseJson = new JSONObject(socketOutputString);
-                    String stringResponse = splitResponseJson.toString();
-                    int splitResponseStringLength = stringResponse.length();
+            /* Из socket может быть прочитано сразу более 1 строки. */
+            int offset = 0;
+            int bracesCounter = 0;
+            int indexOfClose = 0;
+            int jsonBegin = 0;
+            while (offset < socketOutputString.length() && indexOfClose < socketOutputString.length()) {
+                int indexOfOpen = socketOutputString.indexOf('{', offset);
+                indexOfClose = socketOutputString.indexOf('}', offset);
+                if (indexOfOpen < indexOfClose && indexOfOpen != -1) {
+                    offset = indexOfOpen + 1;
+                    bracesCounter += 1;
+                } else {
+                    offset = indexOfClose + 1;
+                    bracesCounter -= 1;
+                }
+                if (bracesCounter == 0) {
+                    String stringResponse = socketOutputString.substring(jsonBegin, offset);
                     stringResponses.add(stringResponse);
                     Log.d(LOG_TAG, "Response: " + stringResponse);
-                    socketOutputString = socketOutputString.substring(splitResponseStringLength);
-                } while (socketOutputString.length() > 0);
-            } catch (JSONException e) {
-                e.printStackTrace();
+                    jsonBegin = indexOfClose + 1;
+                }
             }
         }
         return stringResponses;

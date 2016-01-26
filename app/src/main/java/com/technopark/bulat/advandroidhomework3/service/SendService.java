@@ -88,6 +88,9 @@ public class SendService extends Service {
         RequestType requestType = (RequestType) mOriginalRequestIntent.getSerializableExtra(REQUEST_TYPE_EXTRA);
         RequestMessage requestMessage = null;
         switch (requestType) {
+            case CONNECT: {
+                return;
+            }
             case REGISTER: {
                 String login = mOriginalRequestIntent.getStringExtra(REGISTER_LOGIN_EXTRA);
                 String pass = mOriginalRequestIntent.getStringExtra(REGISTER_PASS_EXTRA);
@@ -111,7 +114,7 @@ public class SendService extends Service {
             case SET_USER_INFO: {
                 String cid = mOriginalRequestIntent.getStringExtra(SET_USER_INFO_CID_EXTRA);
                 String sid = mOriginalRequestIntent.getStringExtra(SET_USER_INFO_SID_EXTRA);
-                User user = (User) mOriginalRequestIntent.getSerializableExtra(SET_USER_INFO_USER_EXTRA);
+                User user = mOriginalRequestIntent.getParcelableExtra(SET_USER_INFO_USER_EXTRA);
                 requestMessage = new SetUserInfoRequest(cid, sid, user);
                 break;
             }

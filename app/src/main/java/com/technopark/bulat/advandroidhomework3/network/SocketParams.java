@@ -8,4 +8,5 @@ interface SocketParams {
     int PORT = 7788;
     int SOCKET_CHECK_TIME = 300;
     int SOCKET_READ_KEEPALIVE = 100;
+    int CONNECTION_ERROR_SLEEP_TIME = 3000;
 }

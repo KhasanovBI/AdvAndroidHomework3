@@ -8,10 +8,12 @@ import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
+import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.network.SocketResponseMessage;
 import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AuthResponse;
@@ -20,6 +22,7 @@ import com.technopark.bulat.advandroidhomework3.network.response.welcomeMessage.
 import com.technopark.bulat.advandroidhomework3.service.SendService;
 import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
+import com.technopark.bulat.advandroidhomework3.util.Base64Translator;
 
 import org.json.JSONObject;
 
@@ -84,6 +87,7 @@ public abstract class BaseFragment extends Fragment {
         switch (action) {
             case "welcome": {
                 new WelcomeResponse(jsonData);
+                loginWithSavedCredentials();
                 break;
             }
             case "auth": {
@@ -96,11 +100,9 @@ public abstract class BaseFragment extends Fragment {
                     editor.putString("cid", cid);
                     editor.putString("sid", sid);
                     editor.apply();
-                    // Получить данные для отображения профиля в drawer
-                    SendServiceHelper.getInstance(getActivity()).requestUserInfo(cid, cid, sid);
                 } else {
                     switch (status) {
-                        case 7:
+                        case 7: {
                             Fragment registerFragment = getActivity()
                                     .getSupportFragmentManager()
                                     .findFragmentById(R.id.fragment_register);
@@ -113,7 +115,8 @@ public abstract class BaseFragment extends Fragment {
                                     .replace(R.id.fragments_container, registerFragment)
                                     .commit();
                             break;
-                        default:
+                        }
+                        default: {
                             handleErrorFromServer(status);
                             Fragment loginFragment = getActivity()
                                     .getSupportFragmentManager()
@@ -127,44 +130,50 @@ public abstract class BaseFragment extends Fragment {
                                     .replace(R.id.fragments_container, loginFragment)
                                     .commit();
                             break;
+                        }
                     }
                 }
                 break;
             }
-            case "userinfo": {
-                UserInfoResponse userInfoResponse = new UserInfoResponse(jsonData);
-                int status = userInfoResponse.getStatus();
-                if (status == 0) {
-
-                    String userStatus = userInfoResponse.getUser().getStatus();
-                    String nickname = userInfoResponse.getUser().getNick();
-
-                    SharedPreferences.Editor sharedPreferencesEditor = mSharedPreferences.edit();
-                    sharedPreferencesEditor.putString("status", userStatus);
-                    sharedPreferencesEditor.putString("nickname", nickname);
-                    sharedPreferencesEditor.apply();
-
-                    DrawerLayout drawerLayout = getMainActivity().getDrawerLayout();
-                    ((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
-                    ((TextView) drawerLayout.findViewById(R.id.status)).setText(userStatus);
-                    Fragment contactListFragment = getActivity()
-                            .getSupportFragmentManager()
-                            .findFragmentById(R.id.fragment_contact_list);
-                    if (contactListFragment == null) {
-                        contactListFragment = new ContactListFragment();
-                    }
-                    getActivity()
-                            .getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragments_container, contactListFragment)
-                            .commit();
-                } else {
-                    handleErrorFromServer(userInfoResponse.getStatus());
-                }
-                break;
-            }
-            default:
-                throw new RuntimeException("Response not handled");
         }
+    }
+
+    private boolean loginWithSavedCredentials() {
+        mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
+        String login = mSharedPreferences.getString("login", null);
+        String password = mSharedPreferences.getString("password", null);
+        if (login != null && password != null) {
+            SendServiceHelper.getInstance(getContext()).requestAuth(login, password);
+            return true;
+        }
+        return false;
+    }
+
+    protected void handleUserInfo(UserInfoResponse userInfoResponse) {
+        User user = userInfoResponse.getUser();
+        String userStatus = user.getStatus();
+        String nickname = user.getNick();
+        String email = user.getEmail();
+        String image = user.getPicture();
+        String phone = user.getPhone();
+
+        SharedPreferences.Editor sharedPreferencesEditor = mSharedPreferences.edit();
+        sharedPreferencesEditor.putString("status", userStatus);
+        sharedPreferencesEditor.putString("nickname", nickname);
+        sharedPreferencesEditor.putString("image", image);
+        sharedPreferencesEditor.putString("status", userStatus);
+        sharedPreferencesEditor.putString("email", email);
+        sharedPreferencesEditor.putString("phone", phone);
+        sharedPreferencesEditor.apply();
+        updateDrawer(nickname, userStatus, image);
+    }
+
+    protected void updateDrawer(String nickname, String userStatus, String image) {
+        DrawerLayout drawerLayout = getMainActivity().getDrawerLayout();
+        if (nickname != null) {
+            ((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
+        }
+        ((TextView) drawerLayout.findViewById(R.id.status)).setText(userStatus);
+        ((ImageView) drawerLayout.findViewById(R.id.drawer_avatar)).setImageBitmap(Base64Translator.decodeBase64(image));
     }
 }

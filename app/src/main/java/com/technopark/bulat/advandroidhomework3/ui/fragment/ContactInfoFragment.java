@@ -49,19 +49,6 @@ public class ContactInfoFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        //GlobalSocket.getInstance().registerObserver(this);
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        /* Unsubscribe from socket messages */
-//        GlobalSocket.getInstance().removeObserver(this);
-    }
-
-    @Override
     protected void handleResponse(String action, JSONObject jsonData) {
 
     }

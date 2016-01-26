@@ -4,18 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AuthResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.RegisterResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.UserInfoResponse;
-import com.technopark.bulat.advandroidhomework3.network.response.welcomeMessage.WelcomeResponse;
 import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 
 import org.json.JSONObject;
@@ -69,6 +66,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     protected void handleResponse(String action, JSONObject jsonData) {
+        super.handleResponse(action, jsonData);
         switch (action) {
             case "register": {
                 RegisterResponse registrationResponse = new RegisterResponse(jsonData);
@@ -80,8 +78,37 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                 }
                 break;
             }
-            default:
-                super.handleResponse(action, jsonData);
+            case "auth": {
+                AuthResponse authResponse = new AuthResponse(jsonData);
+                if (authResponse.getStatus() == 0) {
+                    // Получить данные для отображения профиля в drawer
+                    String cid = mSharedPreferences.getString("cid", null);
+                    String sid = mSharedPreferences.getString("sid", null);
+                    SendServiceHelper.getInstance(getActivity()).requestUserInfo(cid, cid, sid);
+                }
+                break;
+            }
+            case "userinfo": {
+                UserInfoResponse userInfoResponse = new UserInfoResponse(jsonData);
+                int status = userInfoResponse.getStatus();
+                if (status == 0) {
+                    handleUserInfo(userInfoResponse);
+                    Fragment contactListFragment = getActivity()
+                            .getSupportFragmentManager()
+                            .findFragmentById(R.id.fragment_contact_list);
+                    if (contactListFragment == null) {
+                        contactListFragment = new ContactListFragment();
+                    }
+                    getActivity()
+                            .getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragments_container, contactListFragment)
+                            .commit();
+                } else {
+                    handleErrorFromServer(userInfoResponse.getStatus());
+                }
+                break;
+            }
         }
     }
 }

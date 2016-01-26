@@ -51,8 +51,8 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mAddContactDialogFragment = new AddContactDialogFragment();
 
+        mAddContactDialogFragment = new AddContactDialogFragment();
         prepareView();
         View rootView = inflater.inflate(R.layout.fragment_channel_list, container, false);
         RecyclerView mChannelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.contact_list_recycler_view);
@@ -149,7 +149,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                             ),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    handleErrorFromServer(importResponse.getStatus());
+                    handleErrorFromServer(status);
                 }
                 break;
             }
