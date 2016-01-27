@@ -23,6 +23,7 @@ import com.technopark.bulat.advandroidhomework3.network.response.events.MessageE
 import com.technopark.bulat.advandroidhomework3.network.response.messages.ImportResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.MessageResponse;
 
+import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 
 import org.json.JSONObject;
@@ -45,7 +46,7 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //mChannel = (User) getArguments().getSerializable(User.descriptionKey);
+        mUser = getArguments().getParcelable(User.descriptionKey);
 
         prepareView();
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
@@ -63,22 +64,8 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
         mMessageEditText = (EditText) rootView.findViewById(R.id.message_text);
         rootView.findViewById(R.id.send_button).setOnClickListener(this);
 
-//        GlobalSocket.getInstance().performAsyncRequest(new EnterChatRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid, mChannel.getId()));
-
+        //SendServiceHelper.getInstance(getActivity()).requestUserInfo(mUser.getUid(), );
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        GlobalSocket.getInstance().registerObserver(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        /* Unsubscribe from socket messages */
-//        GlobalSocket.getInstance().removeObserver(this);
     }
 
     @Override

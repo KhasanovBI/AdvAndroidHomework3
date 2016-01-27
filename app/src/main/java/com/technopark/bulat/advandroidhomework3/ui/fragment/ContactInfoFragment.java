@@ -1,28 +1,33 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.models.User;
-import com.technopark.bulat.advandroidhomework3.network.response.GeneralResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.UserInfoResponse;
-
+import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
+import com.technopark.bulat.advandroidhomework3.util.Base64Translator;
 
 import org.json.JSONObject;
 
 public class ContactInfoFragment extends BaseFragment {
     public static final String descriptionKey = "UserInfo";
-    private String mUserId;
+    private User mUser;
+    private ImageView mImageImageView;
     private TextView mNicknameTextView;
     private TextView mStatusTextView;
+    private TextView mEmailTextView;
+    private TextView mPhoneTextView;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,44 +38,50 @@ public class ContactInfoFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mUserId = getArguments().getString(descriptionKey);
+        mUser = getArguments().getParcelable(User.descriptionKey);
 
         prepareView();
 
         View rootView = inflater.inflate(R.layout.fragment_contact_info, container, false);
 
+        mImageImageView = (ImageView) rootView.findViewById(R.id.contact_info_image);
         mNicknameTextView = (TextView) rootView.findViewById(R.id.contact_info_nickname);
         mStatusTextView = (TextView) rootView.findViewById(R.id.contact_info_status);
+        mEmailTextView = (TextView) rootView.findViewById(R.id.contact_info_email);
+        mPhoneTextView = (TextView) rootView.findViewById(R.id.contact_info_phone);
 
-        /* Subscribe to socket messages */
-//        GlobalSocket.getInstance().registerObserver(this);
-//        GlobalSocket.getInstance().performAsyncRequest(new UserInfoRequest(mUserId, GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid));
+        // Чтобы получить статус пользователя
+        mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
+        String cid = mSharedPreferences.getString("cid", null);
+        String sid = mSharedPreferences.getString("sid", null);
+        SendServiceHelper.getInstance(getActivity()).requestUserInfo(mUser.getUid(), cid, sid);
+
         return rootView;
     }
 
     @Override
     protected void handleResponse(String action, JSONObject jsonData) {
-
-    }
-
-    public void handleResponseMessage(GeneralResponse rawResponse) {
-        if (rawResponse.getAction().equals("userinfo")) {
-            final UserInfoResponse userInfoResponse = new UserInfoResponse(rawResponse.getJsonData());
-            if (userInfoResponse.getStatus() == 0) {
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        User user = userInfoResponse.getUser();
-//                        mNicknameTextView.setText(user.getNickname());
-                        mStatusTextView.setText(user.getStatus());
+        switch (action) {
+            case "userinfo": {
+                UserInfoResponse userInfoResponse = new UserInfoResponse(jsonData);
+                int status = userInfoResponse.getStatus();
+                if (status == 0) {
+                    User user = userInfoResponse.getUser();
+                    String stringPicture = user.getPicture();
+                    if (stringPicture.length() > 0) {
+                        mImageImageView.setImageBitmap(Base64Translator.decodeBase64(stringPicture));
                     }
-                });
-            } else {
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getActivity().getBaseContext(), userInfoResponse.getError(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                    mNicknameTextView.setText(String.format("Ник: %s", user.getNick()));
+                    mStatusTextView.setText(String.format("Статус: %s", user.getStatus()));
+                    mEmailTextView.setText(String.format("Email: %s", user.getEmail()));
+                    mPhoneTextView.setText(String.format("Телефон: %s", user.getPhone()));
+                } else {
+                    handleErrorFromServer(userInfoResponse.getStatus());
+                }
+                break;
             }
+            default:
+                super.handleResponse(action, jsonData);
         }
     }
 

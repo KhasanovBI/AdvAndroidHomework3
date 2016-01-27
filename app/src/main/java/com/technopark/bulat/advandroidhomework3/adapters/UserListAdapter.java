@@ -41,7 +41,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
     public void onBindViewHolder(UserViewHolder holder, int position) {
         User user = userList.get(position);
         holder.mName.setText(user.getNick());
-        holder.mAvatar.setImageBitmap(Base64Translator.decodeBase64(user.getPicture()));
+        String stringPicture = user.getPicture();
+        if (stringPicture.length() > 0) {
+            holder.mAvatar.setImageBitmap(Base64Translator.decodeBase64(stringPicture));
+        }
     }
 
     public User getItem(int position) {

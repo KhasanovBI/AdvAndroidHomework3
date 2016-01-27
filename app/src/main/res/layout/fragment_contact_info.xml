@@ -3,15 +3,19 @@
     android:id="@+id/fragment_contact_info"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     tools:context=".ui.fragment.ContactInfoFragment">
 
     <ImageView
         android:id="@+id/contact_info_image"
-        android:layout_width="192dp"
-        android:layout_height="192dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
-        android:src="@drawable/splash_screen_image" />
+        android:src="@drawable/default_user_icon" />
 
     <TextView
         android:id="@+id/contact_info_nickname"
@@ -20,8 +24,7 @@
         android:layout_alignLeft="@id/contact_info_image"
         android:layout_alignStart="@id/contact_info_image"
         android:layout_below="@id/contact_info_image"
-        android:layout_marginTop="32dp"
-        android:text="@string/nickname"
+        android:layout_marginTop="8dp"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
@@ -32,8 +35,29 @@
         android:layout_alignLeft="@id/contact_info_nickname"
         android:layout_alignStart="@id/contact_info_nickname"
         android:layout_below="@id/contact_info_nickname"
-        android:layout_marginTop="8dp"
-        android:text="@string/status"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/contact_info_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/contact_info_status"
+        android:layout_alignStart="@id/contact_info_status"
+        android:layout_below="@id/contact_info_status"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/contact_info_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/contact_info_email"
+        android:layout_alignStart="@id/contact_info_email"
+        android:layout_below="@id/contact_info_email"
+        android:layout_marginTop="16dp"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 </RelativeLayout>

@@ -1,17 +1,14 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,8 +27,6 @@ import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 import com.technopark.bulat.advandroidhomework3.util.Base64Translator;
 
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 public class ChangeContactInfoFragment extends BaseFragment implements OnClickListener {
     private static final int REQUEST_CODE_SELECT_IMAGE = 100;
@@ -56,11 +51,12 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CODE_SELECT_IMAGE:
+            case REQUEST_CODE_SELECT_IMAGE: {
                 if (resultCode == AppCompatActivity.RESULT_OK) {
                     Uri imageUri = data.getData();
                     mAvatarImageView.setImageURI(imageUri);
                 }
+            }
         }
     }
 

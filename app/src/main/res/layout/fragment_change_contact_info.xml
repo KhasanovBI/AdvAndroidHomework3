@@ -11,7 +11,7 @@
         android:layout_height="192dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
-        android:src="@drawable/splash_screen_image" />
+        android:src="@drawable/default_user_icon" />
 
     <EditText
         android:id="@+id/contact_info_status"
