@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import com.technopark.bulat.advandroidhomework3.R;
-import com.technopark.bulat.advandroidhomework3.application.MyApplication;
 import com.technopark.bulat.advandroidhomework3.ui.fragment.ChangeContactInfoFragment;
 import com.technopark.bulat.advandroidhomework3.ui.fragment.ContactListFragment;
 import com.technopark.bulat.advandroidhomework3.ui.fragment.SettingsFragment;
@@ -68,7 +67,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_channel_list:
+            case R.id.nav_contact_list:
                 Fragment channelListFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_contact_list);
                 if (channelListFragment == null) {
                     channelListFragment = new ContactListFragment();
@@ -94,6 +93,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 Fragment changeContactInfoFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_change_contact_info);
                 if (changeContactInfoFragment == null) {
                     changeContactInfoFragment = new ChangeContactInfoFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(ChangeContactInfoFragment.IS_FROM_DRAWER, true);
+                    changeContactInfoFragment.setArguments(bundle);
                 }
                 getSupportFragmentManager()
                         .beginTransaction()

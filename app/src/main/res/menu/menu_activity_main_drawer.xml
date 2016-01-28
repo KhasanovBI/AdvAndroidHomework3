@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_channel_list"
+        android:id="@+id/nav_contact_list"
         android:title="@string/list_of_contacts" />
     <item
         android:id="@+id/nav_options"

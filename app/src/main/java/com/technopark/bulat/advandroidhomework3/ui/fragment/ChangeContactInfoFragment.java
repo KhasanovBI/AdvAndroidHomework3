@@ -30,16 +30,18 @@ import org.json.JSONObject;
 
 public class ChangeContactInfoFragment extends BaseFragment implements OnClickListener {
     private static final int REQUEST_CODE_SELECT_IMAGE = 100;
+    public static final String IS_FROM_DRAWER = "IS_FROM_DRAWER";
     private EditText mStatusEditText;
     private EditText mEmailEditText;
     private EditText mPhoneEditText;
     private ImageView mAvatarImageView;
     private SharedPreferences mSharedPreferences;
 
-    private String image;
+    private String picture;
     private String userStatus;
     private String email;
     private String phone;
+    private Boolean isFromDrawer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,9 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        isFromDrawer = bundle != null && bundle.getBoolean(IS_FROM_DRAWER, false);
+
         prepareView();
         View rootView = inflater.inflate(R.layout.fragment_change_contact_info, container, false);
 
@@ -73,7 +78,7 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
 
         mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
 
-        String image = mSharedPreferences.getString("image", "");
+        String pictureString = mSharedPreferences.getString("picture", "");
         String status = mSharedPreferences.getString("status", null);
         String email = mSharedPreferences.getString("email", null);
         String phone = mSharedPreferences.getString("phone", null);
@@ -81,8 +86,8 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
         mStatusEditText.setText(status);
         mEmailEditText.setText(email);
         mPhoneEditText.setText(phone);
-        if (image.length() > 0) {
-            mAvatarImageView.setImageBitmap(Base64Translator.decodeBase64(image));
+        if (pictureString.length() > 0) {
+            mAvatarImageView.setImageBitmap(Base64Translator.decodeBase64(pictureString));
         }
 
         rootView.findViewById(R.id.contact_info_save_button).setOnClickListener(this);
@@ -100,11 +105,11 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
                 if (status == 0) {
                     String userStatus = mStatusEditText.getText().toString();
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
-                    editor.putString("image", image);
+                    editor.putString("picture", picture);
                     editor.putString("status", userStatus);
                     editor.putString("email", email);
                     editor.putString("phone", phone);
-                    updateDrawer(null, userStatus, image);
+                    updateDrawer(null, userStatus, picture);
                     editor.apply();
                     ((TextView) ((MainActivity) getActivity()).getDrawerLayout().findViewById(R.id.status)).setText(userStatus);
                     Toast.makeText(getActivity().getBaseContext(), R.string.changes_saved, Toast.LENGTH_LONG).show();
@@ -119,7 +124,11 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                ((MainActivity) getActivity()).getDrawerLayout().openDrawer(GravityCompat.START);
+                if (isFromDrawer) {
+                    ((MainActivity) getActivity()).getDrawerLayout().openDrawer(GravityCompat.START);
+                } else {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -131,7 +140,7 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.contact_info_save_button: {
-                image = Base64Translator.encodeToBase64(
+                picture = Base64Translator.encodeToBase64(
                         ((BitmapDrawable) mAvatarImageView.getDrawable()).getBitmap()
                 );
                 userStatus = mStatusEditText.getText().toString();
@@ -139,7 +148,7 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
                 phone = mPhoneEditText.getText().toString();
 
                 User user = new User();
-                user.setPicture(image);
+                user.setPicture(picture);
                 user.setStatus(userStatus);
                 user.setEmail(email);
                 user.setPhone(phone);

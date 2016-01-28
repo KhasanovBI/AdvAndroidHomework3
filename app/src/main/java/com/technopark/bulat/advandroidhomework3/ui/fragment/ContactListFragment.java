@@ -88,9 +88,9 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                 break;
             case R.id.contact_avatar: {
                 Fragment contactInfoFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_contact_info);
-                User user = mUserListAdapter.getUserList().get(position);
                 if (contactInfoFragment == null) {
                     contactInfoFragment = new ContactInfoFragment();
+                    User user = mUserListAdapter.getUserList().get(position);
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(User.descriptionKey, user);
                     contactInfoFragment.setArguments(bundle);

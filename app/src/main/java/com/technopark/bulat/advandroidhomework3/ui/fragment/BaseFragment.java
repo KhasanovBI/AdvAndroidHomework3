@@ -163,7 +163,7 @@ public abstract class BaseFragment extends Fragment {
         SharedPreferences.Editor sharedPreferencesEditor = mSharedPreferences.edit();
         sharedPreferencesEditor.putString("status", userStatus);
         sharedPreferencesEditor.putString("nickname", nickname);
-        sharedPreferencesEditor.putString("image", image);
+        sharedPreferencesEditor.putString("picture", image);
         sharedPreferencesEditor.putString("status", userStatus);
         sharedPreferencesEditor.putString("email", email);
         sharedPreferencesEditor.putString("phone", phone);
