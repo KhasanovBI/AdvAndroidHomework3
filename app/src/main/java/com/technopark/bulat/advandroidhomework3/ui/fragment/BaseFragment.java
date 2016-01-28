@@ -141,7 +141,7 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    private boolean loginWithSavedCredentials() {
+    protected boolean loginWithSavedCredentials() {
         mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
         String login = mSharedPreferences.getString("login", null);
         String password = mSharedPreferences.getString("password", null);

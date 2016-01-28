@@ -1,5 +1,6 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -64,7 +65,6 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
         mMessageEditText = (EditText) rootView.findViewById(R.id.message_text);
         rootView.findViewById(R.id.send_button).setOnClickListener(this);
 
-        //SendServiceHelper.getInstance(getActivity()).requestUserInfo(mUser.getUid(), );
         return rootView;
     }
 
@@ -79,7 +79,13 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
             case R.id.send_button:
                 String messageText = mMessageEditText.getText().toString();
                 if (!messageText.equals("")) {
-                    //GlobalSocket.getInstance().performRequest(new MessageRequest(GlobalUserIds.getInstance().cid, GlobalUserIds.getInstance().sid, mChannel.getId(), messageText));
+                    mSharedPreferences = getActivity().getSharedPreferences(
+                            "auth_settings",
+                            Context.MODE_PRIVATE
+                    );
+                    String cid = mSharedPreferences.getString("cid", null);
+                    String sid = mSharedPreferences.getString("sid", null);
+                    SendServiceHelper.getInstance(getActivity()).requestMessage(mUser.getUid(), cid, sid, messageText, null);
                 }
                 break;
         }

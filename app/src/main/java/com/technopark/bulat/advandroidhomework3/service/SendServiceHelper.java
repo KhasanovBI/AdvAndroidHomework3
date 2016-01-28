@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 
+import com.technopark.bulat.advandroidhomework3.models.Attach;
 import com.technopark.bulat.advandroidhomework3.models.User;
 
 import java.lang.ref.WeakReference;
@@ -128,6 +129,18 @@ public class SendServiceHelper {
         intent.putExtra(SendService.DEL_CONTACT_USER_ID_EXTRA, uid);
         intent.putExtra(SendService.DEL_CONTACT_CID_EXTRA, cid);
         intent.putExtra(SendService.DEL_CONTACT_SID_EXTRA, sid);
+        context.startService(intent);
+    }
+
+    public void requestMessage(String uid, String cid, String sid, String body, Attach attach) {
+        RequestType requestType = RequestType.MESSAGE;
+        Context context = weakContext.get();
+        Intent intent = prepareIntent(context, requestType);
+        intent.putExtra(SendService.MESSAGE_USER_ID_EXTRA, uid);
+        intent.putExtra(SendService.MESSAGE_CID_EXTRA, cid);
+        intent.putExtra(SendService.MESSAGE_SID_EXTRA, sid);
+        intent.putExtra(SendService.MESSAGE_BODY_EXTRA, body);
+        intent.putExtra(SendService.MESSAGE_ATTACH_EXTRA, attach);
         context.startService(intent);
     }
 }

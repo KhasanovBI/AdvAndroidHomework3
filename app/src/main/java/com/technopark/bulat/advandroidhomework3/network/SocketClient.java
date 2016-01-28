@@ -28,8 +28,8 @@ public class SocketClient implements SocketParams {
     private static final String LOG_TAG = "MySocketClient";
     private static final int CHUNK_SIZE = 16384;
     private static Socket socket;
-    private InputStream inputStream;
-    private OutputStream outputStream;
+    private static InputStream inputStream;
+    private static OutputStream outputStream;
     private SocketCallback socketCallback;
     private boolean isNeedRun = false;
 
@@ -137,12 +137,6 @@ public class SocketClient implements SocketParams {
                                 return null;
                             }
                         }
-                    }
-                    try {
-                        // Пытаемся прочитать хотя бы один валидный JSON, иначе опять идем по циклу.
-                        new JSONObject(outputStream.toString("utf-8"));
-                        break;
-                    } catch (JSONException ignored) {
                     }
                 }
                 socketOutputString = outputStream.toString("utf-8");

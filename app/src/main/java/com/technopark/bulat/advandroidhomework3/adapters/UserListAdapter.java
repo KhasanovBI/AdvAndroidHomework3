@@ -1,5 +1,7 @@
 package com.technopark.bulat.advandroidhomework3.adapters;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.util.Base64Translator;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +25,10 @@ import java.util.List;
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserViewHolder> {
     private List<User> userList;
     private OnItemClickListener onItemClickListener;
+    private WeakReference<Context> mWeakContext;
 
-    public UserListAdapter() {
+    public UserListAdapter(Context context) {
+        mWeakContext = new WeakReference<>(context);
         userList = new ArrayList<>();
     }
 
@@ -44,6 +49,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
         String stringPicture = user.getPicture();
         if (stringPicture.length() > 0) {
             holder.mAvatar.setImageBitmap(Base64Translator.decodeBase64(stringPicture));
+        } else {
+            holder.mAvatar.setImageDrawable(ContextCompat.getDrawable(mWeakContext.get(), R.drawable.default_user_icon));
         }
     }
 

@@ -57,7 +57,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
         prepareView();
         View rootView = inflater.inflate(R.layout.fragment_contact_list, container, false);
         RecyclerView mChannelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.contact_list_recycler_view);
-        mUserListAdapter = new UserListAdapter();
+        mUserListAdapter = new UserListAdapter(getActivity());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
 

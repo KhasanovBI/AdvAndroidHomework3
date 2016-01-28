@@ -1,9 +1,6 @@
 package com.technopark.bulat.advandroidhomework3.ui.activity;
 
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,26 +8,23 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.technopark.bulat.advandroidhomework3.R;
+import com.technopark.bulat.advandroidhomework3.application.MyApplication;
 import com.technopark.bulat.advandroidhomework3.ui.fragment.ChangeContactInfoFragment;
 import com.technopark.bulat.advandroidhomework3.ui.fragment.ContactListFragment;
 import com.technopark.bulat.advandroidhomework3.ui.fragment.SettingsFragment;
 import com.technopark.bulat.advandroidhomework3.ui.fragment.SplashScreenFragment;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
@@ -71,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    // TODO refactor drawer
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -112,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return false;
     }
+
 
     public ActionBarDrawerToggle getDrawerToggle() {
         return mDrawerToggle;

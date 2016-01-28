@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.technopark.bulat.advandroidhomework3.R;
+import com.technopark.bulat.advandroidhomework3.application.MyApplication;
 import com.technopark.bulat.advandroidhomework3.asyncTasks.OnPreloadTaskDone;
 import com.technopark.bulat.advandroidhomework3.asyncTasks.PreloadTask;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AuthResponse;
@@ -21,7 +22,12 @@ public class SplashScreenFragment extends BaseFragment implements OnPreloadTaskD
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        SendServiceHelper.getInstance(getActivity()).requestConnect();
+        if (MyApplication.isFirstConnect()) {
+            SendServiceHelper.getInstance(getActivity()).requestConnect();
+            MyApplication.setIsFirstConnect(false);
+        } else {
+            loginWithSavedCredentials();
+        }
         if (mPreloadTask != null) {
             mPreloadTask.cancel(true);
         }

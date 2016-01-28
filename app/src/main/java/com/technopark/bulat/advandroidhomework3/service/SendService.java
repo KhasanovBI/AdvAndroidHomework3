@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -13,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.technopark.bulat.advandroidhomework3.R;
+import com.technopark.bulat.advandroidhomework3.application.MyApplication;
 import com.technopark.bulat.advandroidhomework3.models.Attach;
 import com.technopark.bulat.advandroidhomework3.models.Message;
 import com.technopark.bulat.advandroidhomework3.models.User;
@@ -78,6 +81,7 @@ public class SendService extends Service {
     public static final String BROADCAST_ACTION = "com.technopark.bulat.advandroidhomework3.BROADCAST_ACTION";
 
     public static final String SOCKET_RESPONSE_MESSAGE_EXTRA = "SOCKET_RESPONSE_MESSAGE_EXTRA";
+    private static final int NOTIFICATION_ID = 1;
 
     private static SocketClient socketClient;
 
@@ -172,34 +176,55 @@ public class SendService extends Service {
                 Intent intent = new Intent(BROADCAST_ACTION);
                 intent.putExtra(SOCKET_RESPONSE_MESSAGE_EXTRA, socketResponseMessage);
                 sendBroadcast(intent);
-                if (socketResponseMessage.getConnectionError() == -1 && socketResponseMessage.getAction().equals("ev_message")) {
-                    showNotification(socketResponseMessage.getStringResponse());
+                if (socketResponseMessage.getConnectionError() == -1 && socketResponseMessage.getAction().equals("ev_message") && MyApplication.getVisibleActivityCount() == 0) {
+                    try {
+                        MessageEventResponse messageEventResponse = new MessageEventResponse(
+                                new JSONObject(socketResponseMessage.getStringResponse()).getJSONObject("data")
+                        );
+                        Message message = messageEventResponse.getMessage();
+                        SharedPreferences sharedPreferences = getSharedPreferences(
+                                "auth_settings",
+                                Context.MODE_PRIVATE
+                        );
+                        String cid = sharedPreferences.getString("cid", null);
+                        if (cid != null && !cid.equals(message.getUserId())) {
+                            showNotification(message);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         };
     }
 
-    private void showNotification(String stringResponse) {
-        try {
-            MessageEventResponse messageEventResponse = new MessageEventResponse(new JSONObject(stringResponse).getJSONObject("data"));
-            Message message = messageEventResponse.getMessage();
-            Notification.Builder builder = new Notification.Builder(this);
-            builder.setContentTitle(message.getUserNick());
-            builder.setContentText(message.getText());
-            builder.setSmallIcon(R.drawable.ic_cloud_queue_indigo_a200_48dp);
-            Notification notification;
+    private void showNotification(Message message) {
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentTitle(message.getUserNick());
+        builder.setContentText(message.getText());
+        builder.setTicker(String.format(getString(R.string.message_from), message.getUserNick()));
+        builder.setSmallIcon(R.drawable.ic_cloud_queue_white_24dp);
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                notification = builder.build();
-            } else {
-                notification = builder.getNotification();
-            }
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(123, notification);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
         }
+
+        builder.setLights(Color.parseColor("#ff0000ff"), 1000, 500);
+
+        Notification notification;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            builder.setPriority(Notification.PRIORITY_HIGH);
+            notification = builder.build();
+
+        } else {
+            notification = builder.getNotification();
+        }
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // Чтобы перезагружать Ticker
+        notificationManager.cancel(NOTIFICATION_ID);
+        notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     @Nullable
@@ -228,7 +253,6 @@ public class SendService extends Service {
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
     }
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
