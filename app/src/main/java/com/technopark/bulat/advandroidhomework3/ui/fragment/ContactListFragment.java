@@ -296,16 +296,25 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                             new String[]{contact_id},
                             null
                     );
+                    boolean isNeedAddEmptyEmailUser = false;
                     if (emailCursor != null) {
+                        boolean isEntered = false;
                         while (emailCursor.moveToNext()) {
+                            isEntered = true;
                             User phoneEmailUser = new User();
                             phoneEmailUser.setPhone(phoneUser.getPhone());
                             String email = emailCursor.getString(emailCursor.getColumnIndex(EMAIL_DATA));
                             phoneEmailUser.setEmail(email);
                             phoneEmailUsers.add(phoneEmailUser);
                         }
+                        if (!isEntered) {
+                            isNeedAddEmptyEmailUser = true;
+                        }
                         emailCursor.close();
                     } else {
+                        isNeedAddEmptyEmailUser = true;
+                    }
+                    if (isNeedAddEmptyEmailUser) {
                         User phoneEmailUser = new User();
                         phoneEmailUser.setPhone(phoneUser.getPhone());
                         phoneEmailUser.setEmail("");
