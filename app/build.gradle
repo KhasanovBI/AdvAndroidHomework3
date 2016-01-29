@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.technopark.bulat.advandroidhomework2"
+        applicationId "com.technopark.bulat.advandroidhomework3"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
