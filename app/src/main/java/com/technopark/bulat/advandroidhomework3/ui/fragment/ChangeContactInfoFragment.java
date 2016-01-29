@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 public class ChangeContactInfoFragment extends BaseFragment implements OnClickListener {
     private static final int REQUEST_CODE_SELECT_IMAGE = 100;
     public static final String IS_FROM_DRAWER = "IS_FROM_DRAWER";
+    private static final String LOG_TAG = "ChangeContactInfoFrag";
     private EditText mStatusEditText;
     private EditText mEmailEditText;
     private EditText mPhoneEditText;
@@ -155,6 +157,7 @@ public class ChangeContactInfoFragment extends BaseFragment implements OnClickLi
 
                 String cid = mSharedPreferences.getString("cid", null);
                 String sid = mSharedPreferences.getString("sid", null);
+                Log.d(LOG_TAG, "requestSetUserInfo");
                 SendServiceHelper.getInstance(getActivity()).requestSetUserInfo(cid, sid, user);
                 break;
             }

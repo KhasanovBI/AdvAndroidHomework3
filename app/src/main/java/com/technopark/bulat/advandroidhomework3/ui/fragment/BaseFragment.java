@@ -146,6 +146,7 @@ public abstract class BaseFragment extends Fragment {
         String login = mSharedPreferences.getString("login", null);
         String password = mSharedPreferences.getString("password", null);
         if (login != null && password != null) {
+            Log.d(LOG_TAG, "requestAuth");
             SendServiceHelper.getInstance(getContext()).requestAuth(login, password);
             return true;
         }
@@ -177,6 +178,8 @@ public abstract class BaseFragment extends Fragment {
             ((TextView) drawerLayout.findViewById(R.id.nickname)).setText(nickname);
         }
         ((TextView) drawerLayout.findViewById(R.id.status)).setText(userStatus);
-        ((ImageView) drawerLayout.findViewById(R.id.drawer_avatar)).setImageBitmap(Base64Translator.decodeBase64(image));
+        if (image.length() > 0) {
+            ((ImageView) drawerLayout.findViewById(R.id.drawer_avatar)).setImageBitmap(Base64Translator.decodeBase64(image));
+        }
     }
 }

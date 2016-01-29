@@ -47,8 +47,8 @@ public class SocketClient implements SocketParams {
                         for (String stringResponse : stringResponses) {
                             socketCallback.send(new SocketResponseMessage(stringResponse));
                         }
-                        threadSleep(SOCKET_CHECK_TIME);
                     }
+                    threadSleep(SOCKET_CHECK_TIME);
                 }
             }
         });
@@ -122,11 +122,16 @@ public class SocketClient implements SocketParams {
                             outputStream.write(data, 0, readBytesCount);
                         } else {
                             if (readBytesCount == -1) {
-                                // Закончил читать
+                                // Закончил читать - сервер закрыл сокет
+                                if (!connect()) {
+                                    throw new RuntimeException("Проблема с сокетом либо потоком ввода/вывода");
+                                }
+                                outputStream.reset();
                                 break;
                             }
                         }
                     } catch (SocketTimeoutException e) {
+                        // Log.d(LOG_TAG, "Socket Timeout");
                         break;
                     } catch (IOException e) {
                         // Ошибка, сокет отключился
@@ -134,13 +139,14 @@ public class SocketClient implements SocketParams {
                         if (!connect()) {
                             throw new RuntimeException("Проблема с сокетом либо потоком ввода/вывода");
                         }
+                        outputStream.reset();
                     }
                 }
                 socketOutputString = outputStream.toString("utf-8");
                 if (socketOutputString.equals("")) {
                     socketOutputString = null;
                 }
-                outputStream.flush();
+                outputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

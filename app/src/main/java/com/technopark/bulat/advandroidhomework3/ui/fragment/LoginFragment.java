@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +19,7 @@ import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import org.json.JSONObject;
 
 public class LoginFragment extends BaseFragment implements OnClickListener {
+    private static final String LOG_TAG = "LoginFragment";
     private EditText mLoginEditText;
     private EditText mPasswordEditText;
 
@@ -49,6 +51,7 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
                 sharedPreferencesEditor.putString("login", login);
                 sharedPreferencesEditor.putString("password", password);
                 sharedPreferencesEditor.apply();
+                Log.d(LOG_TAG, "requestAuth");
                 SendServiceHelper.getInstance(getActivity()).requestAuth(login, password);
                 break;
             }
@@ -76,6 +79,7 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
                     // Получить данные для отображения профиля в drawer
                     String cid = mSharedPreferences.getString("cid", null);
                     String sid = mSharedPreferences.getString("sid", null);
+                    Log.d(LOG_TAG, "requestUserInfo");
                     SendServiceHelper.getInstance(getActivity()).requestUserInfo(cid, cid, sid);
                 }
                 break;

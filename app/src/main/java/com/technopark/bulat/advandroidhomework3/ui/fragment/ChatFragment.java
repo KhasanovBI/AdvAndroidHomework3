@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,6 +123,7 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
                     );
                     String cid = mSharedPreferences.getString("cid", null);
                     String sid = mSharedPreferences.getString("sid", null);
+                    Log.d(LOG_TAG, "requestMessage");
                     SendServiceHelper.getInstance(getActivity()).requestMessage(mUser.getUid(), cid, sid, messageText, attach);
                 }
                 mMessageEditText.setText("");

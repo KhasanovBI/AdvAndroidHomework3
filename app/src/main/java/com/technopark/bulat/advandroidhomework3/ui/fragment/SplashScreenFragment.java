@@ -1,7 +1,9 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ public class SplashScreenFragment extends BaseFragment implements OnPreloadTaskD
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (MyApplication.isFirstConnect()) {
+            Log.d(LOG_TAG, "requestConnect");
             SendServiceHelper.getInstance(getActivity()).requestConnect();
             MyApplication.setIsFirstConnect(false);
         } else {
@@ -54,6 +57,16 @@ public class SplashScreenFragment extends BaseFragment implements OnPreloadTaskD
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (mPreloadTask != null) {
+            mPreloadTask.cancel(true);
+        }
+        mPreloadTask = new PreloadTask(this);
+        mPreloadTask.execute();
+    }
+
+    @Override
     protected void handleResponse(String action, JSONObject jsonData) {
         super.handleResponse(action, jsonData);
         switch (action) {
@@ -61,8 +74,15 @@ public class SplashScreenFragment extends BaseFragment implements OnPreloadTaskD
                 AuthResponse authResponse = new AuthResponse(jsonData);
                 if (authResponse.getStatus() == 0) {
                     // Получить данные для отображения профиля в drawer
-                    String cid = mSharedPreferences.getString("cid", null);
-                    String sid = mSharedPreferences.getString("sid", null);
+                    String cid = authResponse.getCid();
+                    String sid = authResponse.getSid();
+
+                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    editor.putString("cid", cid);
+                    editor.putString("sid", sid);
+                    editor.apply();
+
+                    Log.d(LOG_TAG, "requestUserInfo");
                     SendServiceHelper.getInstance(getActivity()).requestUserInfo(cid, cid, sid);
                 }
                 break;

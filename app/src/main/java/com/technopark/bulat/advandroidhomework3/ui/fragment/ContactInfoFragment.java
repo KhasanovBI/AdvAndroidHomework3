@@ -3,6 +3,7 @@ package com.technopark.bulat.advandroidhomework3.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,7 @@ import com.technopark.bulat.advandroidhomework3.util.Base64Translator;
 import org.json.JSONObject;
 
 public class ContactInfoFragment extends BaseFragment {
-    public static final String descriptionKey = "UserInfo";
+    private static final String LOG_TAG = "ContactInfoFragment";
     private User mUser;
     private ImageView mImageImageView;
     private TextView mNicknameTextView;
@@ -54,6 +55,7 @@ public class ContactInfoFragment extends BaseFragment {
         mSharedPreferences = getActivity().getSharedPreferences("auth_settings", Context.MODE_PRIVATE);
         String cid = mSharedPreferences.getString("cid", null);
         String sid = mSharedPreferences.getString("sid", null);
+        Log.d(LOG_TAG, "requestUserInfo");
         SendServiceHelper.getInstance(getActivity()).requestUserInfo(mUser.getUid(), cid, sid);
 
         return rootView;

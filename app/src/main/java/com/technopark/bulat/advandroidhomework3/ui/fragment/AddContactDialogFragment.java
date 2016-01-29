@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog.Builder;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -16,6 +17,7 @@ import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 
 public class AddContactDialogFragment extends DialogFragment implements OnClickListener {
+    private static final String LOG_TAG = "AddContactDialogFragment";
     private EditText mUIDEditText;
     private SharedPreferences mSharedPreferences;
 
@@ -43,6 +45,7 @@ public class AddContactDialogFragment extends DialogFragment implements OnClickL
                 if (uid.length() != 0) {
                     String cid = mSharedPreferences.getString("cid", null);
                     String sid = mSharedPreferences.getString("sid", null);
+                    Log.d(LOG_TAG, "requestAddContact");
                     SendServiceHelper.getInstance(getActivity()).requestAddContact(uid, cid, sid);
                 }
                 break;

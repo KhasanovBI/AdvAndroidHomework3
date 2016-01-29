@@ -18,7 +18,7 @@
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:src="@android:drawable/sym_def_app_icon" />
+        android:src="@drawable/default_user_icon" />
 
     <TextView
         android:id="@+id/nickname"

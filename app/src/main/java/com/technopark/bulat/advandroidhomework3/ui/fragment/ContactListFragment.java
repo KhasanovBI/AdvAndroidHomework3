@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +41,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ContactListFragment extends BaseFragment implements UserListAdapter.OnItemClickListener, ContactConstants {
+    private static final String LOG_TAG = "ContactListFragment";
     private UserListAdapter mUserListAdapter;
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private DialogFragment mAddContactDialogFragment;
@@ -72,6 +74,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
         );
         String cid = mSharedPreferences.getString("cid", null);
         String sid = mSharedPreferences.getString("sid", null);
+        Log.d(LOG_TAG, "requestContactList");
         SendServiceHelper.getInstance(getActivity()).requestContactList(cid, sid);
 
         return rootView;
@@ -84,6 +87,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                 String uid = mUserListAdapter.getItem(position).getUid();
                 String cid = mSharedPreferences.getString("cid", null);
                 String sid = mSharedPreferences.getString("sid", null);
+                Log.d(LOG_TAG, "requestDelContact");
                 SendServiceHelper.getInstance(getActivity()).requestDelContact(uid, cid, sid);
                 break;
             case R.id.contact_avatar: {
@@ -121,6 +125,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
     private void importContacts() {
         ArrayList<User> users = getContacts();
         if (users.size() > 0) {
+            Log.d(LOG_TAG, "requestImport");
             SendServiceHelper.getInstance(getActivity()).requestImport(users);
         } else {
             Toast.makeText(getActivity().getApplicationContext(), R.string.you_have_no_contacts, Toast.LENGTH_SHORT).show();
@@ -185,6 +190,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                     Toast.makeText(getActivity().getApplicationContext(), R.string.contact_successfully_added, Toast.LENGTH_LONG).show();
                     String cid = mSharedPreferences.getString("cid", null);
                     String sid = mSharedPreferences.getString("sid", null);
+                    Log.d(LOG_TAG, "requestContactList");
                     SendServiceHelper.getInstance(getActivity()).requestContactList(cid, sid);
                 } else {
                     handleErrorFromServer(status);
@@ -197,6 +203,7 @@ public class ContactListFragment extends BaseFragment implements UserListAdapter
                 if (status == 0) {
                     String cid = mSharedPreferences.getString("cid", null);
                     String sid = mSharedPreferences.getString("sid", null);
+                    Log.d(LOG_TAG, "requestContactList");
                     SendServiceHelper.getInstance(getActivity()).requestContactList(cid, sid);
                 } else {
                     handleErrorFromServer(status);
