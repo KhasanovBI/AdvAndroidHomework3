@@ -20,7 +20,6 @@ public class MessageEventResponse {
     public MessageEventResponse(JSONObject jsonData) {
         Log.d(LOG_TAG, jsonData.toString());
         try {
-
             JSONObject jsonAttach = jsonData.getJSONObject("attach");
             Attach attach = new Attach();
             attach.setMime(jsonAttach.getString("mime"));
@@ -31,6 +30,7 @@ public class MessageEventResponse {
             message.setUserNick(jsonData.getString("nick"));
             message.setText(jsonData.getString("body"));
             message.setTime(new Date(jsonData.getLong("time") * 1000));
+            message.setAttach(attach);
 
         } catch (JSONException e) {
             e.printStackTrace();

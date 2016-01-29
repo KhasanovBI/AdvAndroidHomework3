@@ -6,14 +6,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.technopark.bulat.advandroidhomework3.R;
+import com.technopark.bulat.advandroidhomework3.models.Attach;
 import com.technopark.bulat.advandroidhomework3.models.Message;
 import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.util.Base64Translator;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +30,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     public final static int CURRENT_USER = 1;
     private OnItemClickListener onItemClickListener;
     private SharedPreferences mSharedPreferences;
+    private WeakReference<Context> weakContext;
     private User mAnotherUser;
 
     public ChatAdapter(Context context, User anotherUser) {
         messages = new ArrayList<>();
         mAnotherUser = anotherUser;
+        weakContext = new WeakReference<Context>(context);
         mSharedPreferences = context.getSharedPreferences(
                 "auth_settings",
                 Context.MODE_PRIVATE
@@ -67,6 +73,19 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         }
         if (pictureString.length() > 0) {
             holder.mAuthorImage.setImageBitmap(Base64Translator.decodeBase64(pictureString));
+        }
+        Attach attach = message.getAttach();
+        if (attach != null) {
+            switch (attach.getMime()) {
+                case "image/bmp":
+                    ImageView imageView = new ImageView(weakContext.get());
+                    imageView.setImageBitmap(Base64Translator.decodeBase64(attach.getData()));
+                    imageView.setLayoutParams(new ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT)
+                    );
+                    holder.mMessage.addView(imageView);
+            }
         }
     }
 
@@ -108,12 +127,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         private final TextView mMessageText;
         private final TextView mMessageAuthor;
         public final ImageView mAuthorImage;
+        private final LinearLayout mMessage;
+
 
         public MessageViewHolder(View itemView) {
             super(itemView);
             mMessageText = (TextView) itemView.findViewById(R.id.message_text);
             mMessageAuthor = (TextView) itemView.findViewById(R.id.message_author);
             mAuthorImage = (ImageView) itemView.findViewById(R.id.author_image);
+            mMessage = (LinearLayout) itemView.findViewById(R.id.message);
             mAuthorImage.setOnClickListener(this);
         }
 
