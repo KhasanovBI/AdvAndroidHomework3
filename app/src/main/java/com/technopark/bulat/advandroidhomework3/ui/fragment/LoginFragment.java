@@ -1,6 +1,7 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.AuthResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.UserInfoResponse;
+import com.technopark.bulat.advandroidhomework3.network.response.welcomeMessage.WelcomeResponse;
 import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 
 import org.json.JSONObject;
@@ -72,14 +74,43 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
     @Override
     protected void handleResponse(String action, JSONObject jsonData) {
         switch (action) {
+            case "welcome": {
+                new WelcomeResponse(jsonData);
+                break;
+            }
             case "auth": {
                 AuthResponse authResponse = new AuthResponse(jsonData);
-                if (authResponse.getStatus() == 0) {
+                int status = authResponse.getStatus();
+                if (status == 0) {
+                    String cid = authResponse.getCid();
+                    String sid = authResponse.getSid();
+                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    editor.putString("cid", cid);
+                    editor.putString("sid", sid);
+                    editor.apply();
                     // Получить данные для отображения профиля в drawer
-                    String cid = mSharedPreferences.getString("cid", null);
-                    String sid = mSharedPreferences.getString("sid", null);
                     Log.d(LOG_TAG, "requestUserInfo");
                     SendServiceHelper.getInstance(getActivity()).requestUserInfo(cid, cid, sid);
+                } else {
+                    switch (status) {
+                        case 7: {
+                            Fragment registerFragment = getActivity()
+                                    .getSupportFragmentManager()
+                                    .findFragmentById(R.id.fragment_register);
+                            if (registerFragment == null) {
+                                registerFragment = new RegisterFragment();
+                            }
+                            getActivity()
+                                    .getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragments_container, registerFragment)
+                                    .commit();
+                            break;
+                        }
+                        default: {
+                            handleErrorFromServer(status);
+                        }
+                    }
                 }
                 break;
             }
