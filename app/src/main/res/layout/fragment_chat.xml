@@ -3,9 +3,9 @@
     android:id="@+id/fragment_chat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-    android:layout_marginRight="@dimen/fragment_horizontal_margin"
     android:orientation="vertical"
+    android:paddingLeft="@dimen/fragment_horizontal_padding"
+    android:paddingRight="@dimen/fragment_horizontal_padding"
     tools:context=".ui.fragment.ChatFragment">
 
     <RelativeLayout
@@ -21,8 +21,16 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:maxWidth="@dimen/message_author_max_width"
-            android:src="@drawable/ic_send_black_24dp" />
+            android:src="@drawable/ic_send_black_36dp" />
+
+        <ImageView
+            android:id="@+id/attach_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/send_button"
+            android:layout_toStartOf="@id/send_button"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_attachment_black_36dp" />
 
         <EditText
             android:id="@+id/message_text"
@@ -30,8 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@id/send_button"
-            android:layout_toStartOf="@id/send_button"
+            android:layout_toLeftOf="@id/attach_button"
+            android:layout_toStartOf="@id/attach_button"
             android:hint="@string/your_message" />
     </RelativeLayout>
 

@@ -4,9 +4,6 @@ import android.util.Log;
 
 import com.technopark.bulat.advandroidhomework3.network.request.RequestMessage;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -118,24 +115,24 @@ public class SocketClient implements SocketParams {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 byte[] data = new byte[CHUNK_SIZE];
                 while (true) {
-                    int readBytesCount;
                     try {
-                        readBytesCount = inputStream.read(data, 0, data.length);
+                        int readBytesCount = inputStream.read(data, 0, data.length);
+                        if (readBytesCount >= 0) {
+                            // Что-то прочитано из сокета
+                            outputStream.write(data, 0, readBytesCount);
+                        } else {
+                            if (readBytesCount == -1) {
+                                // Закончил читать
+                                break;
+                            }
+                        }
                     } catch (SocketTimeoutException e) {
                         break;
-                    }
-                    if (readBytesCount > 0) {
-                        // Что-то прочитано из сокета
-                        outputStream.write(data, 0, readBytesCount);
-                    } else {
-                        if (readBytesCount == 0) {
-                            // Закончил читать
-                            break;
-                        } else {
-                            // Ошибка, сокет отключился
-                            if (!connect()) {
-                                return null;
-                            }
+                    } catch (IOException e) {
+                        // Ошибка, сокет отключился
+                        e.printStackTrace();
+                        if (!connect()) {
+                            throw new RuntimeException("Проблема с сокетом либо потоком ввода/вывода");
                         }
                     }
                 }
@@ -160,15 +157,18 @@ public class SocketClient implements SocketParams {
             int bracesCounter = 0;
             int indexOfClose = 0;
             int jsonBegin = 0;
-            while (offset < socketOutputString.length() && indexOfClose < socketOutputString.length()) {
+            while (offset < socketOutputString.length()) {
+                if (socketOutputString.charAt(socketOutputString.length() - 1) != '}'){
+                    throw new RuntimeException("Некорректная строка");
+                }
                 int indexOfOpen = socketOutputString.indexOf('{', offset);
                 indexOfClose = socketOutputString.indexOf('}', offset);
                 if (indexOfOpen < indexOfClose && indexOfOpen != -1) {
                     offset = indexOfOpen + 1;
-                    bracesCounter += 1;
+                    ++bracesCounter;
                 } else {
                     offset = indexOfClose + 1;
-                    bracesCounter -= 1;
+                    --bracesCounter;
                 }
                 if (bracesCounter == 0) {
                     String stringResponse = socketOutputString.substring(jsonBegin, offset);

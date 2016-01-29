@@ -1,9 +1,14 @@
 package com.technopark.bulat.advandroidhomework3.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,19 +21,25 @@ import android.widget.EditText;
 
 import com.technopark.bulat.advandroidhomework3.R;
 import com.technopark.bulat.advandroidhomework3.adapters.ChatAdapter;
+import com.technopark.bulat.advandroidhomework3.models.Attach;
 import com.technopark.bulat.advandroidhomework3.models.User;
 import com.technopark.bulat.advandroidhomework3.network.response.events.MessageEventResponse;
 import com.technopark.bulat.advandroidhomework3.network.response.messages.MessageResponse;
 import com.technopark.bulat.advandroidhomework3.service.SendServiceHelper;
 import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
+import com.technopark.bulat.advandroidhomework3.util.Base64Translator;
 
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 import static com.technopark.bulat.advandroidhomework3.adapters.ChatAdapter.ANOTHER_USER;
 import static com.technopark.bulat.advandroidhomework3.adapters.ChatAdapter.CURRENT_USER;
 
 public class ChatFragment extends BaseFragment implements OnClickListener, ChatAdapter.OnItemClickListener {
     private static final String LOG_TAG = "ChatFragment";
+    private static final int REQUEST_CODE_SELECT_IMAGE = 100;
+    private Attach attach;
     private ChatAdapter mChatAdapter;
     private User mUser;
     private EditText mMessageEditText;
@@ -60,6 +71,7 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
 
         mMessageEditText = (EditText) rootView.findViewById(R.id.message_text);
         rootView.findViewById(R.id.send_button).setOnClickListener(this);
+        rootView.findViewById(R.id.attach_button).setOnClickListener(this);
 
         return rootView;
     }
@@ -79,6 +91,26 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_SELECT_IMAGE: {
+                if (resultCode == AppCompatActivity.RESULT_OK) {
+                    Uri imageUri = data.getData();
+                    try {
+                        attach = new Attach();
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                        attach.setData(Base64Translator.encodeToBase64(bitmap));
+                        attach.setMime("image/bmp");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_button:
@@ -90,9 +122,16 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
                     );
                     String cid = mSharedPreferences.getString("cid", null);
                     String sid = mSharedPreferences.getString("sid", null);
-                    SendServiceHelper.getInstance(getActivity()).requestMessage(mUser.getUid(), cid, sid, messageText, null);
+                    SendServiceHelper.getInstance(getActivity()).requestMessage(mUser.getUid(), cid, sid, messageText, attach);
                 }
                 mMessageEditText.setText("");
+                attach = null;
+                break;
+            case R.id.attach_button:
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, getActivity().getString(R.string.choose_image)), REQUEST_CODE_SELECT_IMAGE);
                 break;
         }
     }

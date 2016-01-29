@@ -6,8 +6,8 @@
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingBottom="@dimen/fragment_vertical_margin"
-    android:paddingLeft="@dimen/fragment_horizontal_margin"
-    android:paddingRight="@dimen/fragment_horizontal_margin"
+    android:paddingLeft="@dimen/fragment_horizontal_padding"
+    android:paddingRight="@dimen/fragment_horizontal_padding"
     android:paddingTop="@dimen/fragment_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
