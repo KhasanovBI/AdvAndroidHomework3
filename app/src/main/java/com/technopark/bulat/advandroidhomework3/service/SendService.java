@@ -2,6 +2,7 @@ package com.technopark.bulat.advandroidhomework3.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.technopark.bulat.advandroidhomework3.R;
@@ -33,6 +35,7 @@ import com.technopark.bulat.advandroidhomework3.network.request.messages.Registe
 import com.technopark.bulat.advandroidhomework3.network.request.messages.SetUserInfoRequest;
 import com.technopark.bulat.advandroidhomework3.network.request.messages.UserInfoRequest;
 import com.technopark.bulat.advandroidhomework3.network.response.events.MessageEventResponse;
+import com.technopark.bulat.advandroidhomework3.ui.activity.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -205,13 +208,23 @@ public class SendService extends Service {
         builder.setContentText(message.getText());
         builder.setTicker(String.format(getString(R.string.message_from), message.getUserNick()));
         builder.setSmallIcon(R.drawable.ic_cloud_queue_white_24dp);
-
+        builder.setAutoCancel(true);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
             builder.setCategory(Notification.CATEGORY_MESSAGE);
         }
 
         builder.setLights(Color.parseColor("#ff0000ff"), 1000, 500);
+
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
+                0,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        builder.setContentIntent(resultPendingIntent);
+
 
         Notification notification;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
