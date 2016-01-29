@@ -71,7 +71,6 @@ public class LoginFragment extends BaseFragment implements OnClickListener {
 
     @Override
     protected void handleResponse(String action, JSONObject jsonData) {
-        super.handleResponse(action, jsonData);
         switch (action) {
             case "auth": {
                 AuthResponse authResponse = new AuthResponse(jsonData);

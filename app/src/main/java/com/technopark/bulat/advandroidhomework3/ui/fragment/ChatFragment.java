@@ -85,8 +85,11 @@ public class ChatFragment extends BaseFragment implements OnClickListener, ChatA
                 break;
             case "ev_message":
                 MessageEventResponse messageEvent = new MessageEventResponse(jsonData);
-                mChatAdapter.add(messageEvent.getMessage());
-                mChatRecyclerView.scrollToPosition(mChatAdapter.getItemCount() - 1);
+                String messageUserId = messageEvent.getMessage().getUserId();
+                if (messageUserId.equals(mUser.getUid()) || messageUserId.equals(mSharedPreferences.getString("cid", null))) {
+                    mChatAdapter.add(messageEvent.getMessage());
+                    mChatRecyclerView.scrollToPosition(mChatAdapter.getItemCount() - 1);
+                }
                 break;
         }
     }

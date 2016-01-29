@@ -30,13 +30,13 @@
 
     <LinearLayout
         android:id="@+id/message"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@id/message_author"
         android:layout_alignRight="@id/message_author"
         android:layout_below="@id/message_author"
-        android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
         android:background="@drawable/message_rectangle"
         android:orientation="vertical">
 

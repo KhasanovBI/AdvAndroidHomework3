@@ -83,7 +83,7 @@ public class SocketClient implements SocketParams {
             }
             socket = new Socket(HOST, PORT);
             socket.setSoTimeout(SOCKET_READ_KEEPALIVE);
-            inputStream = new BufferedInputStream(socket.getInputStream());
+            inputStream = new BufferedInputStream(socket.getInputStream(), CHUNK_SIZE);
             outputStream = socket.getOutputStream();
             return true;
         } catch (ConnectException e) {
@@ -133,13 +133,6 @@ public class SocketClient implements SocketParams {
                     } catch (SocketTimeoutException e) {
                         // Log.d(LOG_TAG, "Socket Timeout");
                         break;
-                    } catch (IOException e) {
-                        // Ошибка, сокет отключился
-                        e.printStackTrace();
-                        if (!connect()) {
-                            throw new RuntimeException("Проблема с сокетом либо потоком ввода/вывода");
-                        }
-                        outputStream.reset();
                     }
                 }
                 socketOutputString = outputStream.toString("utf-8");

@@ -96,10 +96,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (messages.get(position).getUserId().equals(mAnotherUser.getUid())) {
+        String messageUserId = messages.get(position).getUserId();
+        if (messageUserId.equals(mAnotherUser.getUid())) {
             return ANOTHER_USER;
-        } else
+        } else {
             return CURRENT_USER;
+        }
     }
 
     public OnItemClickListener getOnItemClickListener() {
