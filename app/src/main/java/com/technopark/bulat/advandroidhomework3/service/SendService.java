@@ -208,6 +208,7 @@ public class SendService extends Service {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            builder.setCategory(Notification.CATEGORY_MESSAGE);
         }
 
         builder.setLights(Color.parseColor("#ff0000ff"), 1000, 500);
