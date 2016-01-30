@@ -150,7 +150,8 @@ public class SocketClient implements SocketParams {
         List<String> stringResponses = null;
         if (socketOutputString != null && socketOutputString.length() > 0) {
             if (socketOutputString.charAt(socketOutputString.length() - 1) != '}'){
-                throw new RuntimeException("Некорректная строка");
+                return null;
+//                throw new RuntimeException("Некорректная строка");
             }
             stringResponses = new ArrayList<>();
             /* Из socket может быть прочитано сразу более 1 строки. */

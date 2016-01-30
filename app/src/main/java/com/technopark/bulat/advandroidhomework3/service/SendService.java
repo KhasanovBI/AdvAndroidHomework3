@@ -209,6 +209,7 @@ public class SendService extends Service {
         builder.setTicker(String.format(getString(R.string.message_from), message.getUserNick()));
         builder.setSmallIcon(R.drawable.ic_cloud_queue_white_24dp);
         builder.setAutoCancel(true);
+        builder.setWhen(System.currentTimeMillis());
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
             builder.setCategory(Notification.CATEGORY_MESSAGE);
