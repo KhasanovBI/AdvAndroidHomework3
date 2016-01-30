@@ -126,7 +126,6 @@ public class SocketClient implements SocketParams {
                                 if (!connect()) {
                                     throw new RuntimeException("Проблема с сокетом либо потоком ввода/вывода");
                                 }
-                                outputStream.reset();
                                 break;
                             }
                         }
@@ -150,18 +149,17 @@ public class SocketClient implements SocketParams {
     private List<String> parseSocketOutput(String socketOutputString) {
         List<String> stringResponses = null;
         if (socketOutputString != null && socketOutputString.length() > 0) {
+            if (socketOutputString.charAt(socketOutputString.length() - 1) != '}'){
+                throw new RuntimeException("Некорректная строка");
+            }
             stringResponses = new ArrayList<>();
             /* Из socket может быть прочитано сразу более 1 строки. */
             int offset = 0;
             int bracesCounter = 0;
-            int indexOfClose = 0;
             int jsonBegin = 0;
             while (offset < socketOutputString.length()) {
-                if (socketOutputString.charAt(socketOutputString.length() - 1) != '}'){
-                    throw new RuntimeException("Некорректная строка");
-                }
                 int indexOfOpen = socketOutputString.indexOf('{', offset);
-                indexOfClose = socketOutputString.indexOf('}', offset);
+                int indexOfClose = socketOutputString.indexOf('}', offset);
                 if (indexOfOpen < indexOfClose && indexOfOpen != -1) {
                     offset = indexOfOpen + 1;
                     ++bracesCounter;
