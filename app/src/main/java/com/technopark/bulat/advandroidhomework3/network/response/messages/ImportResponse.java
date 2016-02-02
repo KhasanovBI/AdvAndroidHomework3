@@ -33,7 +33,7 @@ public class ImportResponse extends ResponseMessage {
                     user.setUid(jsonUser.getString("uid"));
                     user.setNick(jsonUser.getString("nick"));
                     user.setEmail(jsonUser.getString("email"));
-                    user.setPhone(jsonData.getString("phone"));
+                    user.setPhone(jsonUser.getString("phone"));
                     users.add(user);
                 }
             } catch (JSONException e) {
